@@ -1,0 +1,45 @@
+{
+  "name": "linkina",
+  "productName": "linkina",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".vite/build/main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "TheEZIC",
+    "email": "35061249+TheEZIC@users.noreply.github.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.1.1",
+    "@electron-forge/maker-deb": "^6.1.1",
+    "@electron-forge/maker-rpm": "^6.1.1",
+    "@electron-forge/maker-squirrel": "^6.1.1",
+    "@electron-forge/maker-zip": "^6.1.1",
+    "@electron-forge/plugin-vite": "^6.1.1",
+    "electron": "24.1.2"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@mantine/core": "^6.0.8",
+    "@mantine/dates": "^6.0.8",
+    "@mantine/form": "^6.0.8",
+    "@mantine/hooks": "^6.0.8",
+    "@mantine/modals": "^6.0.8",
+    "@mantine/notifications": "^6.0.8",
+    "@mantine/prism": "^6.0.8",
+    "@vitejs/plugin-react": "^4.0.0",
+    "dayjs": "^1.11.7",
+    "electron-squirrel-startup": "^1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sass": "^1.62.0"
+  }
+}
