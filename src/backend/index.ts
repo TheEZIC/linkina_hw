@@ -1,5 +1,6 @@
 import { Database, open } from "sqlite";
 import sqlite3 from "sqlite3";
+import {ObjectKeys} from "../types";
 
 let database: Database;
 
@@ -13,7 +14,7 @@ export default {
   login(username: string, password: string): Promise<Pick<User, 'id' | 'role' | 'name'> | undefined> {
     return database.get(`SELECT id, role, name FROM users WHERE username = ? AND password = ?`, [username, password]);
   },
-  register(username: string, password: string, name: string) {
+  register(username: string, password: string, name: string): Promise<void> {
     return database.exec(`INSERT INTO users (role, username, password, name) VALUES (0, ?, ?, ?)`, [...arguments]);
   },
   async getContactInfo(id: number) {
@@ -21,7 +22,7 @@ export default {
     //
   },
   async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>) {
-    let keys = Object.keys(update) as (keyof Partial<Omit<ContactInfo, 'id'>>)[];
+    let keys = Object.keys(update) as ObjectKeys<Partial<Omit<ContactInfo, "id">>>;
     let info = await database.get(`SELECT * FROM contact_info WHERE id = ?`, [id]) as ContactInfo;
 
     if(!info) {
