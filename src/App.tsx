@@ -1,7 +1,10 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { APP_TITLE } from "./constants/AppTitle";
-import { MantineProvider, Text } from '@mantine/core';
+import {Container, MantineProvider, Text} from '@mantine/core';
+import AuthForm from "./components/AuthForm";
+import styles from "./index.module.scss";
+import "./index.scss";
 
 const App = () => {
   return (
@@ -10,13 +13,15 @@ const App = () => {
       withGlobalStyles
       withNormalizeCSS
     >
-      <Text>Welcome to Mantine!</Text>
+      <Container className={styles.container}>
+        <AuthForm/>
+      </Container>
     </MantineProvider>
   );
 };
 
 const setAppTitle = () => {
-  document.querySelector("head title").innerHTML = APP_TITLE;
+  document.querySelector("head title")!.innerHTML = APP_TITLE;
 };
 
 const initAppInterface = () => {
