@@ -16,7 +16,12 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "paths": {
-
+      "@components/*": ["./src/components/*"],
+      "@uikit/*": ["./src/UIKit"],
+      "@pages/*": ["./src/pages/*"],
+      "@hooks/*": ["./src/hooks/"],
+      "@utils/*": ["./src/utils/"],
+      "@constants/*": ["./src/constants/"]
     }
   }
 }
