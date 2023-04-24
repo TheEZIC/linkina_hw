@@ -20,7 +20,7 @@ const createWindow = () => {
     autoHideMenuBar: true,
     title: APP_TITLE,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.ts'),
+      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
     },
   });
