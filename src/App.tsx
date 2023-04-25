@@ -5,6 +5,7 @@ import {Container, MantineProvider, Text} from '@mantine/core';
 import AuthForm from "./components/AuthForm";
 import styles from "./index.module.scss";
 import "./index.scss";
+import backend from "./backend";
 
 const App = () => {
   return (
@@ -20,6 +21,10 @@ const App = () => {
   );
 };
 
+const initDatabase = () => {
+  return backend.initDatabase();
+};
+
 const setAppTitle = () => {
   document.querySelector("head title")!.innerHTML = APP_TITLE;
 };
@@ -29,8 +34,9 @@ const initAppInterface = () => {
   ReactDOM.render(<App/>, container);
 };
 
-const bootstrap = () => {
+const bootstrap = async () => {
   setAppTitle();
+  await initDatabase();
   initAppInterface();
 };
 

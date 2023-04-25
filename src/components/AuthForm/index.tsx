@@ -10,10 +10,6 @@ const AuthForm = () => {
     ? <SignInForm toggle={handlers.toggle}/>
     : <SignUpForm toggle={handlers.toggle}/>;
 
-  useEffect(() => {
-    window.API.login("", "");
-  }, [ ]);
-
   return (
     <div className={styles.wrapper}>
       {renderForm()}

@@ -1,6 +1,6 @@
 import { Database, open } from "sqlite";
 // @ts-ignore
-import sqlite3 from "sqlite3-prebuilt";
+import sqlite3 from "sqlite3";
 import {ObjectKeys} from "../types";
 
 let database: Database;
@@ -102,7 +102,7 @@ export default {
       let order = await database.get(`SELECT requester_id FROM orders WHERE id = ?`, [order_id]);
       if(order.requester_id != requester_id)
         throw "bruh";
-      
+
       return database.all(`SELECT * FROM submissions WHERE order_id = ?`, [order_id])
     },
     async submitEdit(requester_id: number, order_id: number, specification: string) {

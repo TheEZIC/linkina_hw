@@ -1,7 +1,21 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import {APP_TITLE} from "./constants/AppTitle";
-import backend from "./backend";
+// import backend from "./backend";
+//
+// const initBackend = (obj: object, prevKey?: string) => {
+//   for (const [key, value] of Object.entries(obj)) {
+//     const handleKey = prevKey ? prevKey + "." + key : key;
+//
+//     if (typeof value === "function") {
+//       ipcMain.handle(handleKey, (e, args) => value(args));
+//     } else if (typeof value === "object") {
+//       initBackend(value, handleKey);
+//     }
+//   }
+// };
+//
+// initBackend(backend);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -11,8 +25,6 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   const width = 800;
   const height = 600;
-
-  backend.initDatabase();
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
