@@ -1,5 +1,6 @@
 import { Database, open } from "sqlite";
-import sqlite3 from "sqlite3";
+// @ts-ignore
+import sqlite3 from "sqlite3-prebuilt";
 import {ObjectKeys} from "../types";
 
 let database: Database;
