@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useDisclosure} from "@mantine/hooks";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
@@ -9,6 +9,10 @@ const AuthForm = () => {
   const renderForm = () => !loginForm
     ? <SignInForm toggle={handlers.toggle}/>
     : <SignUpForm toggle={handlers.toggle}/>;
+
+  useEffect(() => {
+    window.API.login("", "");
+  }, [ ]);
 
   return (
     <div className={styles.wrapper}>

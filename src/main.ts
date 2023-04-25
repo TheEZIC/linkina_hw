@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from "electron";
 import path from "path";
 import {APP_TITLE} from "./constants/AppTitle";
+import backend from "./backend";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -10,6 +11,8 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   const width = 800;
   const height = 600;
+
+  backend.initDatabase();
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({

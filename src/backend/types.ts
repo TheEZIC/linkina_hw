@@ -1,6 +1,8 @@
+type UserRole = "requester" | "manager" | "modeler";
+
 type User = {
   id: number,
-  role: number,
+  role: UserRole,
   username: string,
   password: string,
   name: string,
@@ -13,9 +15,11 @@ type ContactInfo = {
   email?: string,
 }
 
+type OrderState = "unresponded" | "assigned" | "responded" | "finished";
+
 type Order = {
   id: number,
-  state: string,
+  state: OrderState,
   requester_id: number,
   modeler_id?: number,
   name: string,
