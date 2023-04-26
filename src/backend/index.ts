@@ -1,9 +1,11 @@
-import { Database, open } from "sqlite";
+// import { Database, open } from "sqlite";
 // @ts-ignore
-import sqlite3 from "sqlite3";
-import {ObjectKeys} from "../types";
+import sqlite3 from "sqlite3-prebuilt";
+import bsqlite3 from "better-sqlite3";
 
-let database: Database;
+type ObjectKeys<T extends object> = (keyof T)[];
+
+let database: bsqlite3.Database;
 
 const CREATE_QUERY = `
 CREATE TABLE IF NOT EXISTS users (
@@ -15,113 +17,113 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS contact_info (
-  id int PRIMARY KEY,
+  id integer PRIMARY KEY,
   address text,
   phone text,
   email text
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-  id int PRIMARY KEY AUTOINCREMENT,
+  id integer PRIMARY KEY AUTOINCREMENT,
   state text NOT NULL,
-  requester_id int NOT NULL,
-  modeler_id int,
+  requester_id integer NOT NULL,
+  modeler_id integer,
   name text NOT NULL,
   specification text NOT NULL,
   private_description text,
-  deadline date
+  deadline integer
 );
 
 CREATE TABLE IF NOT EXISTS edits (
-  id int PRIMARY KEY AUTOINCREMENT,
-  order_id int NOT NULL,
-  date date NOT NULL,
+  id integer PRIMARY KEY AUTOINCREMENT,
+  order_id integer NOT NULL,
+  date integer NOT NULL,
   specification text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS submissions (
-  id int PRIMARY KEY AUTOINCREMENT,
-  order_id int NOT NULL,
-  date date NOT NULL,
+  id integer PRIMARY KEY AUTOINCREMENT,
+  order_id integer NOT NULL,
+  date integer NOT NULL,
   demo_file text NOT NULL
 );
 `;
 
 export default {
   initDatabase() {
-    return open({
-      filename: './db.sqlite',
-      driver: sqlite3.Database,
-    }).then(_ => {
-      database = _;
-      database.exec(CREATE_QUERY);
-    });
+    database = bsqlite3('./db.sqlite');
+    database.exec(CREATE_QUERY);
+    // return open({
+    //   filename: './db.sqlite',
+    //   driver: sqlite3.Database,
+    // }).then(_ => {
+    //   database = _;
+    //   database.exec(CREATE_QUERY);
+    // });
   },
   login(username: string, password: string): Promise<Pick<User, 'id' | 'role' | 'name'> | undefined> {
-    return database.get(`SELECT id, role, name FROM users WHERE username = ? AND password = ?`, [username, password]);
+    return database.prepare(`SELECT id, role, name FROM users WHERE username = ? AND password = ?`).get(username, password) as any;
   },
   register(username: string, password: string, name: string): Promise<void> {
-    return database.exec(`INSERT INTO users (role, username, password, name) VALUES (0, ?, ?, ?)`, [username, password, name]);
+    return database.prepare(`INSERT INTO users (role, username, password, name) VALUES (0, ?, ?, ?)`).run(username, password, name) as any;
   },
   getContactInfo(id: number): Promise<ContactInfo> {
-    return database.get(`SELECT * FROM contact_info WHERE id = ?`, [id]) as any;
+    return database.prepare(`SELECT * FROM contact_info WHERE id = ?`).get(id) as any;
   },
   async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>) {
     let keys = Object.keys(update) as ObjectKeys<Partial<Omit<ContactInfo, "id">>>;
-    let info = await database.get(`SELECT * FROM contact_info WHERE id = ?`, [id]) as ContactInfo;
+    let info = await this.getContactInfo(id);
 
     if(!info) {
-      return database.run(`INSERT INTO contact_info (id, ${keys.join(', ')})`, [id, ...keys.map(v => update[v])]);
+      return database.prepare(`INSERT INTO contact_info (id, ${keys.join(', ')})`).run(id, ...keys.map(v => update[v]));
     } else {
-      let params = [...keys.map((v) => update[v]), id];
-
-      return database.run(`UPDATE contact_info SET ${keys.map(v => `${v} = ?`).join(', ')} WHERE id = ?`, params);
+      return database.prepare(`UPDATE contact_info SET ${keys.map(v => `${v} = ?`).join(', ')} WHERE id = ?`).run(...keys.map((v) => update[v]), id);
     }
   },
 
   manager: {
     findOrders(params: Partial<Pick<Order, 'requester_id' | 'modeler_id' | 'state'>>): Promise<Order[]> {
       let keys = Object.keys(params);
-      return database.all(`SELECT * FROM orders WHERE ${keys.map(v => `${v} = ?`).join(' AND ')}`, keys.map(v => (params as any)[v]))
+      return database.prepare(`SELECT * FROM orders WHERE ${keys.map(v => `${v} = ?`).join(' AND ')}`).all(...keys.map(v => (params as any)[v])) as any;
     },
     assignOrder(id: number, modeler_id: number, deadline: Date) {
-      return database.exec(`UPDATE orders SET modeler_id = ?, deadline = ? WHERE id = ?`, [modeler_id, deadline.valueOf(), id]);
+      return database.prepare(`UPDATE orders SET modeler_id = ?, deadline = ? WHERE id = ?`).run(modeler_id, deadline.valueOf(), id);
     },
     updatePrivateDescription(id: number, description: string) {
-      return database.exec(`UPDATE orders SET private_description = ? WHERE id = ?`, [description, id]);
+      return database.prepare(`UPDATE orders SET private_description = ? WHERE id = ?`).run(description, id);
     },
   },
   requester: {
     submitOrder(requester_id: number, request: Pick<Order, 'name' | 'specification'>) {
-      return database.exec(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`, ["unresponded", requester_id, request.name, request.specification]);
+      return database.prepare(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`).run("unresponded", requester_id, request.name, request.specification);
     },
     getOrders(requester_id: number): Promise<Omit<Order, 'requester_id' | 'private_description'>[]> {
-      return database.all(`SELECT id, state, modeler_id, name, specification FROM orders WHERE requester_id = ?`, [requester_id]) as any;
+      return database.prepare(`SELECT id, state, modeler_id, name, specification FROM orders WHERE requester_id = ?`).all(requester_id) as any;
     },
     async getSubmissions(requester_id: number, order_id: number): Promise<Submission[]> {
-      let order = await database.get(`SELECT requester_id FROM orders WHERE id = ?`, [order_id]);
+      let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
       if(order.requester_id != requester_id)
         throw "bruh";
-
-      return database.all(`SELECT * FROM submissions WHERE order_id = ?`, [order_id])
+      
+      return database.prepare(`SELECT * FROM submissions WHERE order_id = ?`).all(order_id) as any;
     },
     async submitEdit(requester_id: number, order_id: number, specification: string) {
-      let order = await database.get(`SELECT requester_id FROM orders WHERE id = ?`, [order_id]);
+      let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
       if(order.requester_id != requester_id)
         throw "bruh";
 
-      return database.exec(`INSERT INTO edits (order_id, date, specification) VALUES (?, ?, ?)`, [order_id, Date.now(), specification]);
+      return database.prepare(`INSERT INTO edits (order_id, date, specification) VALUES (?, ?, ?)`).run(order_id, Date.now(), specification);
     }
   },
   modeler: {
     getOrders(modeler_id: number): Promise<Order[]> {
-      return database.all(`SELECT * FROM orders WHERE modeler_id = ?`, [modeler_id]);
+      return database.prepare(`SELECT * FROM orders WHERE modeler_id = ?`).all(modeler_id) as any;
     },
     getEdits(order_id: number): Promise<Edit[]> {
-      return database.all(`SELECT * FROM edits WHERE order_id = ?`, [order_id]);
+      return database.prepare(`SELECT * FROM edits WHERE order_id = ?`).all(order_id) as any;
     },
     addSubmission(order_id: number, file: string) {
-      return database.exec(`INSERT INTO submissions (order_id, date, demo_file) VALUES (?, ?, ?)`, [order_id, Date.now(), file]);
+      return database.prepare(`INSERT INTO submissions (order_id, date, demo_file) VALUES (?, ?, ?)`).run(order_id, Date.now(), file);
     }
   }
 }

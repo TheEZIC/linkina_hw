@@ -1,20 +1,20 @@
 {
-  "name": "linkina",
-  "productName": "linkina",
+  "name": "linkina_hw_webpack",
+  "productName": "linkina_hw_webpack",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": ".vite/build/main.js",
+  "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "eslint --ext .ts,.tsx ."
   },
   "keywords": [],
   "author": {
-    "name": "TheEZIC",
-    "email": "35061249+TheEZIC@users.noreply.github.com"
+    "name": "OctopuSSX",
+    "email": "vladik0701@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
@@ -23,28 +23,33 @@
     "@electron-forge/maker-rpm": "^6.1.1",
     "@electron-forge/maker-squirrel": "^6.1.1",
     "@electron-forge/maker-zip": "^6.1.1",
-    "@electron-forge/plugin-vite": "^6.1.1",
-    "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11",
-    "electron": "24.1.2"
+    "@electron-forge/plugin-webpack": "^6.1.1",
+    "@types/better-sqlite3": "^7.6.4",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "@vercel/webpack-asset-relocator-loader": "1.7.3",
+    "css-loader": "^6.0.0",
+    "electron": "24.1.2",
+    "eslint": "^8.0.1",
+    "eslint-plugin-import": "^2.25.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.13",
+    "node-loader": "^2.0.0",
+    "sass": "^1.62.1",
+    "sass-loader": "^13.2.2",
+    "style-loader": "^3.0.0",
+    "ts-loader": "^9.2.2",
+    "ts-node": "^10.0.0",
+    "typescript": "~4.5.4"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@mantine/core": "^6.0.8",
-    "@mantine/dates": "^6.0.8",
-    "@mantine/form": "^6.0.8",
-    "@mantine/hooks": "^6.0.8",
-    "@mantine/modals": "^6.0.8",
-    "@mantine/notifications": "^6.0.8",
-    "@mantine/prism": "^6.0.8",
-    "@vitejs/plugin-react": "^4.0.0",
-    "dayjs": "^1.11.7",
+    "@mantine/core": "^6.0.9",
+    "@mantine/form": "^6.0.9",
+    "@mantine/hooks": "^6.0.9",
+    "better-sqlite3": "^8.3.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "sass": "^1.62.0",
-    "sqlite": "^4.1.2",
-    "sqlite3": "^5.1.6",
-    "sqlite3-prebuilt": "^3.1.8"
+    "react-dom": "^18.2.0"
   }
 }
