@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {Button, Card, Flex, Input, PasswordInput, Space, Title} from "@mantine/core";
 import {useForm} from "@mantine/form";
 
-type LoginFormType = {
+type SignInFormType = {
   login: string;
   password: string;
 };
@@ -12,12 +12,24 @@ export type SignInFormProps = {
 };
 
 const SignInForm: FC<SignInFormProps> = ({toggle}) => {
-  const form = useForm<LoginFormType>({
+  const form = useForm<SignInFormType>({
     initialValues: {
       login: "",
       password: "",
-    }
+    },
   });
+
+  const signIn = async () => {
+    const { login, password } = form.values;
+    console.log(login, password, "data");
+
+    if (!login || !password) {
+      return;
+    }
+
+    const loginData = await window.API.login(login, password);
+    console.log(loginData);
+  };
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: "400px" }}>
@@ -28,17 +40,17 @@ const SignInForm: FC<SignInFormProps> = ({toggle}) => {
           withAsterisk={true}
           required={true}
         >
-          <Input placeholder={"Введите логин"}/>
+          <Input placeholder={"Введите логин"} {...form.getInputProps("login")}/>
         </Input.Wrapper>
         <Input.Wrapper
           label={"Пароль"}
           withAsterisk={true}
           required={true}
         >
-          <PasswordInput placeholder={"Введите пароль"}/>
+          <PasswordInput placeholder={"Введите пароль"} {...form.getInputProps("password")}/>
         </Input.Wrapper>
         <Flex justify={"space-between"}>
-          <Button color="green">Войти</Button>
+          <Button color="green" onClick={signIn}>Войти</Button>
           <Button color="yellow" onClick={toggle}>Регистрация</Button>
         </Flex>
       </Flex>
