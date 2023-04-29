@@ -62,32 +62,57 @@ const backend = {
   getContactInfo(id: number): Promise<ContactInfo> {
     return database.prepare(`SELECT * FROM contact_info WHERE id = ?`).get(id) as any;
   },
-  async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>) {
+  async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>): Promise<void> {
     let keys = Object.keys(update) as ObjectKeys<Partial<Omit<ContactInfo, "id">>>;
     let info = await this.getContactInfo(id);
 
     if(!info) {
-      return database.prepare(`INSERT INTO contact_info (id, ${keys.join(', ')})`).run(id, ...keys.map(v => update[v]));
+      return database.prepare(`INSERT INTO contact_info (id, ${keys.join(', ')})`).run(id, ...keys.map(v => update[v])) as any;
     } else {
-      return database.prepare(`UPDATE contact_info SET ${keys.map(v => `${v} = ?`).join(', ')} WHERE id = ?`).run(...keys.map((v) => update[v]), id);
+      return database.prepare(`UPDATE contact_info SET ${keys.map(v => `${v} = ?`).join(', ')} WHERE id = ?`).run(...keys.map((v) => update[v]), id) as any;
     }
   },
 
   manager: {
     findOrders(params: Partial<Pick<Order, 'requester_id' | 'modeler_id' | 'state'>>): Promise<Order[]> {
       let keys = Object.keys(params);
-      return database.prepare(`SELECT * FROM orders WHERE ${keys.map(v => `${v} = ?`).join(' AND ')}`).all(...keys.map(v => (params as any)[v])) as any;
+      if(keys.length)
+        return database.prepare(`SELECT * FROM orders WHERE ${keys.map(v => `${v} = ?`).join(' AND ')}`).all(...keys.map(v => (params as any)[v])) as any;
+      else
+        return database.prepare(`SELECT * FROM orders`).all() as any;
     },
-    assignOrder(id: number, modeler_id: number, deadline: Date) {
-      return database.prepare(`UPDATE orders SET modeler_id = ?, deadline = ? WHERE id = ?`).run(modeler_id, deadline.valueOf(), id);
+    assignOrder(id: number, modeler_id: number, deadline: Date): Promise<void> {
+      return database.prepare(`UPDATE orders SET modeler_id = ?, deadline = ? WHERE id = ?`).run(modeler_id, deadline.valueOf(), id) as any;
     },
-    updatePrivateDescription(id: number, description: string) {
-      return database.prepare(`UPDATE orders SET private_description = ? WHERE id = ?`).run(description, id);
+    updatePrivateDescription(id: number, description: string): Promise<void> {
+      return database.prepare(`UPDATE orders SET private_description = ? WHERE id = ?`).run(description, id) as any;
     },
+    getModelers(): Promise<Pick<User, 'id' | 'name'>> {
+      return database.prepare(`SELECT id, name FROM users WHERE role = ?`).all('modeler') as any;
+    },
+    getRequesters(): Promise<Pick<User, 'id' | 'name'>> {
+      return database.prepare(`SELECT id, name FROM users WHERE role = ?`).all('requester') as any;
+    }
   },
   requester: {
     submitOrder(requester_id: number, order: Pick<Order, 'name' | 'specification'>) {
       return database.prepare(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`).run("unresponded", requester_id, order.name, order.specification);
+    },
+    editOrder(requester_id: number, order_id: number, data: Pick<Order, 'name' | 'specification'>): Promise<void> {
+      let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
+      if(order.requester_id != requester_id)
+        throw "bruh";
+
+      return database.prepare(`UPDATE orders SET name = ?, specification = ? WHERE id = ?`).run(data.name, data.specification, order_id) as any;
+    },
+    deleteOrder(requester_id: number, order_id: number): Promise<void> {
+      let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
+      if(order.requester_id != requester_id)
+        throw "bruh";
+
+      database.prepare(`DELETE FROM edits WHERE order_id = ?`).run(order_id);
+      database.prepare(`DELETE FROM submissions WHERE order_id = ?`).run(order_id); // ?
+      return database.prepare(`DELETE FROM orders WHERE id = ?`).run(order_id) as any;
     },
     getOrders(requester_id: number): Promise<Omit<Order, 'requester_id' | 'private_description'>[]> {
       return database.prepare(`SELECT id, state, modeler_id, name, specification FROM orders WHERE requester_id = ?`).all(requester_id) as any;
@@ -99,12 +124,12 @@ const backend = {
 
       return database.prepare(`SELECT * FROM submissions WHERE order_id = ?`).all(order_id) as any;
     },
-    async submitEdit(requester_id: number, order_id: number, specification: string) {
+    async submitEdit(requester_id: number, order_id: number, specification: string): Promise<void> {
       let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
       if(order.requester_id != requester_id)
         throw "bruh";
 
-      return database.prepare(`INSERT INTO edits (order_id, date, specification) VALUES (?, ?, ?)`).run(order_id, Date.now(), specification);
+      return database.prepare(`INSERT INTO edits (order_id, date, specification) VALUES (?, ?, ?)`).run(order_id, Date.now(), specification) as any;
     }
   },
   modeler: {
@@ -114,8 +139,8 @@ const backend = {
     getEdits(order_id: number): Promise<Edit[]> {
       return database.prepare(`SELECT * FROM edits WHERE order_id = ?`).all(order_id) as any;
     },
-    addSubmission(order_id: number, file: string) {
-      return database.prepare(`INSERT INTO submissions (order_id, date, demo_file) VALUES (?, ?, ?)`).run(order_id, Date.now(), file);
+    addSubmission(order_id: number, file: string): Promise<void> {
+      return database.prepare(`INSERT INTO submissions (order_id, date, demo_file) VALUES (?, ?, ?)`).run(order_id, Date.now(), file) as any;
     }
   }
 }
