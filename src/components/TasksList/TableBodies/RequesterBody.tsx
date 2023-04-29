@@ -3,8 +3,10 @@ import {Button, Flex} from "@mantine/core";
 import {useRequesterOrders} from "../../../hooks/useRequesterOrders";
 import {useDisclosure} from "@mantine/hooks";
 import RequesterOrderForm from "../Forms/RequesterOrderForm";
+import {useUserContext} from "../../../contexts/user-context";
 
 const RequesterBody = () => {
+  const {user} = useUserContext();
   const [orders, getOrders] = useRequesterOrders();
   const [activeOrder, setActiveOrder] = useState<Order>();
   const [opened, { open, close }] = useDisclosure(false);
@@ -19,7 +21,12 @@ const RequesterBody = () => {
   };
 
   const onSave = (user: BaseUser, order: Pick<Order, "name" | "specification">) => {
-    //window.API.requester.submitEdit(user.id, activeOrder.id, order);
+    window.API.requester.editOrder(user.id, activeOrder.id, order);
+  };
+
+  const deleteOrder = async (orderId: number) => {
+    await window.API.requester.deleteOrder(user.id, orderId);
+    getOrders();
   };
 
   const renderItems = () => orders.map((o, i) => (
@@ -31,6 +38,7 @@ const RequesterBody = () => {
         <Flex gap={"sm"}>
           <Button color={"yellow"} size={"xs"}>Подробнее</Button>
           <Button color={"violet"} size={"xs"} onClick={() => openModal(o)}>Изменить</Button>
+          <Button color={"red"} size={"xs"} onClick={() => deleteOrder(o.id)}>Удалить</Button>
         </Flex>
       </td>
     </tr>

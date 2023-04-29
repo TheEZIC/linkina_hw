@@ -15,6 +15,8 @@ const API = {
   },
   requester: {
     submitOrder: (...args: any[]) => ipcRenderer.invoke("requester.submitOrder", ...args),
+    editOrder: (...args: any[]) => ipcRenderer.invoke("requester.editOrder", ...args),
+    deleteOrder: (...args: any[]) => ipcRenderer.invoke("requester.deleteOrder", ...args),
     getOrders: (...args: any[]) => ipcRenderer.invoke("requester.getOrders", ...args),
     getSubmissions: (...args: any[]) => ipcRenderer.invoke("requester.getSubmissions", ...args),
     submitEdit: (...args: any[]) => ipcRenderer.invoke("requester.submitEdit", ...args),
