@@ -1,6 +1,3 @@
-// import { Database, open } from "sqlite";
-// @ts-ignore
-import sqlite3 from "sqlite3-prebuilt";
 import bsqlite3 from "better-sqlite3";
 
 type ObjectKeys<T extends object> = (keyof T)[];
@@ -10,7 +7,7 @@ let database: bsqlite3.Database;
 const CREATE_QUERY = `
 CREATE TABLE IF NOT EXISTS users (
   id integer PRIMARY KEY AUTOINCREMENT,
-  role integer NOT NULL,
+  role text NOT NULL,
   username text NOT NULL,
   password text NOT NULL,
   name text NOT NULL
@@ -49,23 +46,18 @@ CREATE TABLE IF NOT EXISTS submissions (
 );
 `;
 
-export default {
+const backend = {
   initDatabase() {
     database = bsqlite3('./db.sqlite');
     database.exec(CREATE_QUERY);
-    // return open({
-    //   filename: './db.sqlite',
-    //   driver: sqlite3.Database,
-    // }).then(_ => {
-    //   database = _;
-    //   database.exec(CREATE_QUERY);
-    // });
   },
-  login(username: string, password: string): Promise<Pick<User, 'id' | 'role' | 'name'> | undefined> {
+  login(username: string, password: string): Promise<BaseUser | undefined> {
     return database.prepare(`SELECT id, role, name FROM users WHERE username = ? AND password = ?`).get(username, password) as any;
   },
-  register(username: string, password: string, name: string): Promise<void> {
-    return database.prepare(`INSERT INTO users (role, username, password, name) VALUES (0, ?, ?, ?)`).run(username, password, name) as any;
+  register(username: string, password: string, name: string): Promise<BaseUser> {
+    database.prepare(`INSERT INTO users (role, username, password, name) VALUES ('requester', ?, ?, ?)`).run(username, password, name);
+    console.log(backend, "backend");
+    return backend.login(username, password);
   },
   getContactInfo(id: number): Promise<ContactInfo> {
     return database.prepare(`SELECT * FROM contact_info WHERE id = ?`).get(id) as any;
@@ -94,8 +86,8 @@ export default {
     },
   },
   requester: {
-    submitOrder(requester_id: number, request: Pick<Order, 'name' | 'specification'>) {
-      return database.prepare(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`).run("unresponded", requester_id, request.name, request.specification);
+    submitOrder(requester_id: number, order: Pick<Order, 'name' | 'specification'>) {
+      return database.prepare(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`).run("unresponded", requester_id, order.name, order.specification);
     },
     getOrders(requester_id: number): Promise<Omit<Order, 'requester_id' | 'private_description'>[]> {
       return database.prepare(`SELECT id, state, modeler_id, name, specification FROM orders WHERE requester_id = ?`).all(requester_id) as any;
@@ -104,7 +96,7 @@ export default {
       let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
       if(order.requester_id != requester_id)
         throw "bruh";
-      
+
       return database.prepare(`SELECT * FROM submissions WHERE order_id = ?`).all(order_id) as any;
     },
     async submitEdit(requester_id: number, order_id: number, specification: string) {
@@ -127,3 +119,5 @@ export default {
     }
   }
 }
+
+export default backend;

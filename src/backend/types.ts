@@ -1,12 +1,15 @@
 type UserRole = "requester" | "manager" | "modeler";
 
+type BaseUser = {
+  id: number;
+  role: UserRole;
+  name: string;
+}
+
 type User = {
-  id: number,
-  role: UserRole,
   username: string,
   password: string,
-  name: string,
-}
+} & BaseUser
 
 type ContactInfo = {
   id: number,

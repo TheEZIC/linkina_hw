@@ -1,6 +1,7 @@
 import React, {FC} from 'react';
 import {Button, Card, Flex, Input, PasswordInput, Title} from "@mantine/core";
 import {useForm} from "@mantine/form";
+import {useUserContext} from "../../contexts/user-context";
 
 type SignUpFormType = {
   login: string;
@@ -14,6 +15,7 @@ export type SignUpFormProps = {
 };
 
 const SignUpForm: FC<SignUpFormProps> = ({ toggle }) => {
+  const {setUser} = useUserContext();
   const form = useForm<SignUpFormType>({
     initialValues: {
       login: "",
@@ -23,14 +25,15 @@ const SignUpForm: FC<SignUpFormProps> = ({ toggle }) => {
     },
   });
 
-  const signUp = () => {
+  const signUp = async () => {
     const { login, password, firstName, lastName } = form.values;
 
     if (!login || !password || !firstName || !lastName) {
       return;
     }
 
-    window.API.register(login, password, `${firstName} ${lastName}`);
+    const signUpData = await window.API.register(login, password, `${firstName} ${lastName}`);
+    setUser(signUpData);
   };
 
   return (

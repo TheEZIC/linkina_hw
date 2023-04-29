@@ -12,7 +12,7 @@ const initBackend = (obj: object, prevKey?: string) => {
     const handleKey = prevKey ? prevKey + "." + key : key;
 
     if (typeof value === "function") {
-      ipcMain.handle(handleKey, (e, ...args) => value(...args));
+      ipcMain.handle(handleKey, (e, ...args) => value.bind(backend)(...args));
     } else if (typeof value === "object") {
       initBackend(value, handleKey);
     }
@@ -27,10 +27,16 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = (): void => {
+  const appWidth: number = 800;
+  const appHeight: number = 600;
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    height: appHeight,
+    minHeight: appHeight,
+    width: appWidth,
+    minWidth: appWidth,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
