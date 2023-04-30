@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Flex} from "@mantine/core";
+import {ActionIcon, Button, Flex, Tooltip} from "@mantine/core";
 import {useRequesterOrders} from "../../../hooks/useRequesterOrders";
 import {useDisclosure} from "@mantine/hooks";
 import RequesterOrderForm from "../Forms/RequesterOrderForm";
 import {useUserContext} from "../../../contexts/user-context";
 import RequesterOrderDetails from "../Details/RequesterOrderDetails";
+import {BsFillTrashFill} from "react-icons/bs";
+import {HiPencilAlt} from "react-icons/hi";
+import {FiMoreHorizontal} from "react-icons/fi";
 
 const RequesterBody = () => {
   const {user} = useUserContext();
@@ -42,10 +45,39 @@ const RequesterBody = () => {
       <td>{o.name}</td>
       <td>{o.deadline ?? "Пока не установлен"}</td>
       <td>
-        <Flex gap={"sm"}>
-          <Button color={"yellow"} size={"xs"} onClick={() => openDetailsModal(o)}>Подробнее</Button>
-          <Button color={"violet"} size={"xs"} onClick={() => openEditModal(o)}>Изменить</Button>
-          <Button color={"red"} size={"xs"} onClick={() => deleteOrder(o.id)}>Удалить</Button>
+        <Flex align={"center"}>
+          <Tooltip label={"Подробнее"} color={"yellow.8"} withArrow={true}>
+            <ActionIcon
+              color={"yellow.5"}
+              variant={"light"}
+              ml={"sm"}
+              onClick={() => openDetailsModal(o)}
+            >
+              <FiMoreHorizontal/>
+            </ActionIcon>
+          </Tooltip>
+
+          <Tooltip label={"Редактировать"} color={"violet.8"} withArrow={true}>
+            <ActionIcon
+              color={"violet.5"}
+              variant={"light"}
+              ml={"sm"}
+              onClick={() => openEditModal(o)}
+            >
+              <HiPencilAlt/>
+            </ActionIcon>
+          </Tooltip>
+
+          <Tooltip label={"Удалить"} color={"red.8"} withArrow={true}>
+            <ActionIcon
+              color={"red.5"}
+              variant={"light"}
+              ml={"sm"}
+              onClick={() => deleteOrder(o.id)}
+            >
+              <BsFillTrashFill/>
+            </ActionIcon>
+          </Tooltip>
         </Flex>
       </td>
     </tr>
