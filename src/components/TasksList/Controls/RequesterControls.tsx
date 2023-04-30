@@ -3,8 +3,6 @@ import {Button} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import RequesterOrderForm from "../Forms/RequesterOrderForm";
 
-const addTitle = "Создать заказ";
-
 const RequesterControls = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const onSave = (user: BaseUser, order: Pick<Order, "name" | "specification">) =>
@@ -12,8 +10,9 @@ const RequesterControls = () => {
 
   return (
     <>
-      <Button color={"green"} onClick={open}>{addTitle}</Button>
+      <Button color={"green"} onClick={open}>Создать заказ</Button>
       <RequesterOrderForm
+        title={"Создать заказ"}
         opened={opened}
         close={close}
         onSave={onSave}

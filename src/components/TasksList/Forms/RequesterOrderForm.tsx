@@ -11,13 +11,12 @@ export type RequesterOrderFormType = {
 };
 
 export type RequesterOrderFormProps = {
+  title: string;
   initialValues?: Partial<RequesterOrderFormType>;
   onSave: (user: BaseUser, order: Pick<Order, "name" | "specification">) => Promise<unknown> | unknown;
 } & FormBaseProps;
 
-const addTitle = "Создать заказ";
-
-const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened, close, onSave }) => {
+const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened, close, onSave, title }) => {
   const { user } = useUserContext();
   const [orders, getOrders] = useRequesterOrders();
   const form = useForm<RequesterOrderFormType>();
@@ -45,7 +44,7 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened
     <Modal
       opened={opened}
       onClose={close}
-      title={addTitle}
+      title={title}
       centered={true}
       overlayProps={{
         blur: 4,

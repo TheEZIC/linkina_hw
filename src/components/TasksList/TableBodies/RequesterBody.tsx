@@ -87,6 +87,7 @@ const RequesterBody = () => {
     <>
       {renderItems()}
       <RequesterOrderForm
+        title={"Редактировать заказ"}
         opened={editOpened}
         close={closeEdit}
         initialValues={activeOrder}
