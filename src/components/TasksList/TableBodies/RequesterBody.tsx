@@ -4,20 +4,27 @@ import {useRequesterOrders} from "../../../hooks/useRequesterOrders";
 import {useDisclosure} from "@mantine/hooks";
 import RequesterOrderForm from "../Forms/RequesterOrderForm";
 import {useUserContext} from "../../../contexts/user-context";
+import RequesterOrderDetails from "../Details/RequesterOrderDetails";
 
 const RequesterBody = () => {
   const {user} = useUserContext();
   const [orders, getOrders] = useRequesterOrders();
   const [activeOrder, setActiveOrder] = useState<Order>();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+  const [detailsOpened, { open: openDetails, close: closeDetails }] = useDisclosure(false);
 
   useEffect(() => {
     getOrders();
   }, []);
 
-  const openModal = (order: Order) => {
+  const openEditModal = (order: Order) => {
     setActiveOrder(order);
-    open();
+    openEdit();
+  };
+
+  const openDetailsModal = (order: Order) => {
+    setActiveOrder(order);
+    openDetails();
   };
 
   const onSave = (user: BaseUser, order: Pick<Order, "name" | "specification">) => {
@@ -36,8 +43,8 @@ const RequesterBody = () => {
       <td>{o.deadline ?? "Пока не установлен"}</td>
       <td>
         <Flex gap={"sm"}>
-          <Button color={"yellow"} size={"xs"}>Подробнее</Button>
-          <Button color={"violet"} size={"xs"} onClick={() => openModal(o)}>Изменить</Button>
+          <Button color={"yellow"} size={"xs"} onClick={() => openDetailsModal(o)}>Подробнее</Button>
+          <Button color={"violet"} size={"xs"} onClick={() => openEditModal(o)}>Изменить</Button>
           <Button color={"red"} size={"xs"} onClick={() => deleteOrder(o.id)}>Удалить</Button>
         </Flex>
       </td>
@@ -48,10 +55,15 @@ const RequesterBody = () => {
     <>
       {renderItems()}
       <RequesterOrderForm
-        opened={opened}
-        close={close}
+        opened={editOpened}
+        close={closeEdit}
         initialValues={activeOrder}
         onSave={onSave}
+      />
+      <RequesterOrderDetails
+        opened={detailsOpened}
+        close={closeDetails}
+        order={activeOrder}
       />
     </>
   );

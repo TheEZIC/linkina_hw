@@ -3,11 +3,6 @@ import {Button} from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import RequesterOrderForm from "../Forms/RequesterOrderForm";
 
-type AddOrderFormType = {
-  name: string;
-  specification: string;
-};
-
 const addTitle = "Создать заказ";
 
 const RequesterControls = () => {
