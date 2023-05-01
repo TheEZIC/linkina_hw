@@ -72,7 +72,6 @@ const backend = {
       return database.prepare(`UPDATE contact_info SET ${keys.map(v => `${v} = ?`).join(', ')} WHERE id = ?`).run(...keys.map((v) => update[v]), id) as any;
     }
   },
-
   manager: {
     findOrders(params: Partial<Pick<Order, 'requester_id' | 'modeler_id' | 'state'>>): Promise<Order[]> {
       let keys = Object.keys(params);

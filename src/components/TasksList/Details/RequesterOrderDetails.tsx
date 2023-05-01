@@ -1,6 +1,7 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Modal, Title, Text, Flex} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
+import {statusMap} from "../../../utils";
 
 type RequesterOrderDetailsProps = {
   order?: Order;
@@ -12,6 +13,21 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, 
   if (!order) {
     return <></>;
   }
+
+  const [edits, setEdits] = useState<Edit[]>();
+
+  const getEdits = async () => {
+    const edits = await window.API.modeler.getEdits(order.id);
+    setEdits(edits);
+  }
+
+  useEffect(() => {
+    getEdits();
+  }, [opened]);
+
+  const renderEdits = () => edits.map((e, i) => (
+    <span key={`edit-${i}`}>{e.specification}</span>
+  ));
 
   return (
     <Modal
@@ -32,6 +48,16 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, 
           <Title color={"violet"} order={4}>Срок</Title>
           <Text>{order.deadline ?? "Пока не установлен"}</Text>
         </Flex>
+        <Flex direction={"column"}>
+          <Title color={"violet"} order={4}>Статус</Title>
+          <Text>{statusMap[order.state]}</Text>
+        </Flex>
+        {edits && (
+          <Flex direction={"column"}>
+            <Title color={"violet"} order={4}>Правки</Title>
+            {renderEdits()}
+          </Flex>
+        )}
       </Flex>
     </Modal>
   );

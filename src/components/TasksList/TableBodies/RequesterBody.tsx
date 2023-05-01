@@ -8,6 +8,9 @@ import RequesterOrderDetails from "../Details/RequesterOrderDetails";
 import {BsFillTrashFill} from "react-icons/bs";
 import {HiPencilAlt} from "react-icons/hi";
 import {FiMoreHorizontal} from "react-icons/fi";
+import {statusMap} from "../../../utils";
+import {FaPlus} from "react-icons/fa";
+import AddEditForm from "../Forms/AddEditForm";
 
 const RequesterBody = () => {
   const {user} = useUserContext();
@@ -15,6 +18,7 @@ const RequesterBody = () => {
   const [activeOrder, setActiveOrder] = useState<Order>();
   const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
   const [detailsOpened, { open: openDetails, close: closeDetails }] = useDisclosure(false);
+  const [submitEditOpened, { open: openSubmitEdit, close: closeSubmitEdit }] = useDisclosure(false);
 
   useEffect(() => {
     getOrders();
@@ -30,6 +34,11 @@ const RequesterBody = () => {
     openDetails();
   };
 
+  const openSubmitEditModal = (order: Order) => {
+    setActiveOrder(order);
+    openSubmitEdit();
+  }
+
   const onSave = (user: BaseUser, order: Pick<Order, "name" | "specification">) => {
     window.API.requester.editOrder(user.id, activeOrder.id, order);
   };
@@ -44,8 +53,20 @@ const RequesterBody = () => {
       <td>{o.id}</td>
       <td>{o.name}</td>
       <td>{o.deadline ?? "Пока не установлен"}</td>
+      <td>{statusMap[o.state]}</td>
       <td>
         <Flex align={"center"}>
+          <Tooltip label={"Добавить правку"} color={"green.8"} withArrow={true}>
+            <ActionIcon
+              color={"green.5"}
+              variant={"light"}
+              ml={"sm"}
+              onClick={() => openSubmitEditModal(o)}
+            >
+              <FaPlus/>
+            </ActionIcon>
+          </Tooltip>
+
           <Tooltip label={"Подробнее"} color={"yellow.8"} withArrow={true}>
             <ActionIcon
               color={"yellow.5"}
@@ -92,6 +113,12 @@ const RequesterBody = () => {
         close={closeEdit}
         initialValues={activeOrder}
         onSave={onSave}
+      />
+      <AddEditForm
+        opened={submitEditOpened}
+        close={closeSubmitEdit}
+        order={activeOrder}
+        user={user}
       />
       <RequesterOrderDetails
         opened={detailsOpened}
