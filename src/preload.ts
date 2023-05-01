@@ -12,6 +12,8 @@ const API = {
     findOrders: (...args: any[]) => ipcRenderer.invoke("manager.findOrders", ...args),
     login: (...args: any[]) => ipcRenderer.invoke("manager.assignOrder", ...args),
     updatePrivateDescription: (...args: any[]) => ipcRenderer.invoke("manager.updatePrivateDescription", ...args),
+    getModelers: (...args: any[]) => ipcRenderer.invoke("manager.getModelers", ...args),
+    assignOrder: (...args: any[]) => ipcRenderer.invoke("manager.assignOrder", ...args),
   },
   requester: {
     submitOrder: (...args: any[]) => ipcRenderer.invoke("requester.submitOrder", ...args),

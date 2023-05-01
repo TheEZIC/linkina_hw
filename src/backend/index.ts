@@ -88,7 +88,7 @@ const backend = {
     updatePrivateDescription(id: number, description: string): Promise<void> {
       return database.prepare(`UPDATE orders SET private_description = ? WHERE id = ?`).run(description, id) as any;
     },
-    getModelers(): Promise<Pick<User, 'id' | 'name'>> {
+    getModelers(): Promise<Pick<User, 'id' | 'name'>[]> {
       return database.prepare(`SELECT id, name FROM users WHERE role = ?`).all('modeler') as any;
     },
     getRequesters(): Promise<Pick<User, 'id' | 'name'>> {

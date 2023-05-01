@@ -6,6 +6,11 @@ type BaseUser = {
   name: string;
 }
 
+type ModelerUser = {
+  id: number;
+  name: string;
+};
+
 type User = {
   username: string,
   password: string,
@@ -28,7 +33,7 @@ type Order = {
   name: string,
   specification: string,
   private_description: string,
-  deadline: string,
+  deadline: number,
 }
 
 type Edit = {

@@ -1,11 +1,15 @@
 import React, {FC, useEffect} from 'react';
-import {Button, Flex, Modal, Textarea, TextInput} from "@mantine/core";
+import {Button, Flex, Modal, Select, Textarea, TextInput} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
 import {useManagerOrders} from "../../../hooks/useManagerOrders";
+import {useModelers} from "../../../hooks/useModelers";
+import {DateTimePicker} from "@mantine/dates";
 
 export type ManagerOrderFormType = {
   privateDescription: string;
+  modelerId: number;
+  deadline: number;
 };
 
 export type ManagerOrderFormProps = {
@@ -18,18 +22,37 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = ({ opened, close, order }) =
   }
 
   const form = useForm<ManagerOrderFormType>();
+  const [modelers, getModelers] = useModelers();
   const [orders, getOrders] = useManagerOrders();
 
   useEffect(() => {
     form.setValues({
       privateDescription: order.private_description ?? "",
+      modelerId: order.modeler_id ?? 0,
+      deadline: order.deadline ?? Date.now(),
     });
   }, [order]);
 
-  const onSave = async () => {
-    const { privateDescription } = form.values;
+  useEffect(() => {
+    getModelers();
+  }, [opened]);
 
-    await window.API.manager.updatePrivateDescription(order.id, privateDescription);
+  const getOptions = () => modelers.map((m) => ({
+    value: m.id,
+    label: m.name,
+  }))
+
+  const onSave = async () => {
+    const { privateDescription, modelerId, deadline } = form.values;
+
+    if (privateDescription) {
+      await window.API.manager.updatePrivateDescription(order.id, privateDescription);
+    }
+
+    if (modelerId && deadline) {
+      await window.API.manager.assignOrder(order.id, modelerId, new Date(deadline));
+    }
+
     getOrders();
     close();
   }
@@ -48,10 +71,31 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = ({ opened, close, order }) =
         <Textarea
           label={"Описание для исполнителя"}
           placeholder={"Введите описание для исполнителя"}
-          withAsterisk={true}
           required={true}
           {...form.getInputProps("privateDescription")}
         />
+        <Select
+          label={"Исполнитель"}
+          placeholder={"выберите исполнителя"}
+          data={getOptions()}
+          searchable={true}
+          {...form.getInputProps("modelerId")}
+        />
+        {form.values.deadline && (
+          <DateTimePicker
+            label={"Срок выполнения"}
+            placeholder={"Укажите срок выполнения"}
+            dropdownType={"modal"}
+            value={new Date(form.values.deadline)}
+            onChange={(d) => form.setFieldValue("deadline", d.valueOf())}
+            modalProps={{
+              centered: true,
+              overlayProps: {
+                blur: 4,
+              },
+            }}
+          />
+        )}
         <Flex gap={"sm"}>
           <Button color={"green"} onClick={onSave}>Сохранить</Button>
         </Flex>

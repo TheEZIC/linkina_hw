@@ -52,7 +52,7 @@ const RequesterBody = () => {
     <tr key={`order-${i}-${o.id}`}>
       <td>{o.id}</td>
       <td>{o.name}</td>
-      <td>{o.deadline ?? "Пока не установлен"}</td>
+      <td>{o.deadline ? new Date(o.deadline).toLocaleString() : "Пока не установлен"}</td>
       <td>{statusMap[o.state]}</td>
       <td>
         <Flex align={"center"}>

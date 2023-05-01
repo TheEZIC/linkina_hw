@@ -50,7 +50,7 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, 
         </Flex>
         <Flex direction={"column"}>
           <Title color={"violet"} order={4}>Срок</Title>
-          <Text>{order.deadline ?? "Пока не установлен"}</Text>
+          <Text>{order.deadline ?  new Date(order.deadline).toLocaleString() : "Пока не установлен"}</Text>
         </Flex>
         <Flex direction={"column"}>
           <Title color={"violet"} order={4}>Статус</Title>
