@@ -37,7 +37,7 @@ const RequesterBody = () => {
   const openSubmitEditModal = (order: Order) => {
     setActiveOrder(order);
     openSubmitEdit();
-  }
+  };
 
   const onSave = (user: BaseUser, order: Pick<Order, "name" | "specification">) => {
     window.API.requester.editOrder(user.id, activeOrder.id, order);

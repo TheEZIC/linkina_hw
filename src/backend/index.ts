@@ -73,12 +73,14 @@ const backend = {
     }
   },
   manager: {
-    findOrders(params: Partial<Pick<Order, 'requester_id' | 'modeler_id' | 'state'>>): Promise<Order[]> {
-      let keys = Object.keys(params);
-      if(keys.length)
+    findOrders(params?: Partial<Pick<Order, 'requester_id' | 'modeler_id' | 'state'>>): Promise<Order[]> {
+
+      if (params) {
+        let keys = Object.keys(params);
         return database.prepare(`SELECT * FROM orders WHERE ${keys.map(v => `${v} = ?`).join(' AND ')}`).all(...keys.map(v => (params as any)[v])) as any;
-      else
+      } else {
         return database.prepare(`SELECT * FROM orders`).all() as any;
+      }
     },
     assignOrder(id: number, modeler_id: number, deadline: Date): Promise<void> {
       return database.prepare(`UPDATE orders SET modeler_id = ?, deadline = ? WHERE id = ?`).run(modeler_id, deadline.valueOf(), id) as any;

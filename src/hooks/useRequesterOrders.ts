@@ -12,4 +12,4 @@ export const useRequesterOrders = (): [Order[], () => Promise<void>] => {
   };
 
   return [data as Order[], getOrders];
-}
+};

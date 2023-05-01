@@ -3,13 +3,13 @@ import {Modal, Title, Text, Flex} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {statusMap} from "../../../utils";
 
-type RequesterOrderDetailsProps = {
+type ManagerOrderDetailsProps = {
   order?: Order;
 } & FormBaseProps;
 
 const detailsTitle = "Подробности заказа";
 
-const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, close }) => {
+const ManagerOrderDetails: FC<ManagerOrderDetailsProps> = ({ order, opened, close }) => {
   if (!order) {
     return <></>;
   }
@@ -49,6 +49,10 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, 
           <Text>{order.specification}</Text>
         </Flex>
         <Flex direction={"column"}>
+          <Title color={"violet"} order={4}>Описание для исполнителя</Title>
+          <Text>{order.private_description}</Text>
+        </Flex>
+        <Flex direction={"column"}>
           <Title color={"violet"} order={4}>Срок</Title>
           <Text>{order.deadline ?? "Пока не установлен"}</Text>
         </Flex>
@@ -67,4 +71,4 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, 
   );
 };
 
-export default RequesterOrderDetails;
+export default ManagerOrderDetails;
