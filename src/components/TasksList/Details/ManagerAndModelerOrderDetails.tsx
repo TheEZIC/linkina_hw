@@ -1,8 +1,7 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, memo, useEffect, useState} from 'react';
 import {Modal, Title, Text, Flex} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {statusMap} from "../../../utils";
-import {useModelers} from "../../../hooks/useModelers";
 import {useModelersStore} from "../../../stores/modelersStore";
 import {shallow} from "zustand/shallow";
 
@@ -12,7 +11,7 @@ type ManagerAndModelerOrderDetailsProps = {
 
 const detailsTitle = "Подробности заказа";
 
-const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = ({ order, opened, close }) => {
+const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = memo(({ order, opened, close }) => {
   if (!order) {
     return <></>;
   }
@@ -94,6 +93,6 @@ const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = ({
       </Flex>
     </Modal>
   );
-};
+});
 
 export default ManagerAndModelerOrderDetails;

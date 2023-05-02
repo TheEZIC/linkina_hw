@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, memo, useEffect, useState} from 'react';
 import {Modal, Title, Text, Flex} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {statusMap} from "../../../utils";
@@ -9,7 +9,7 @@ type RequesterOrderDetailsProps = {
 
 const detailsTitle = "Подробности заказа";
 
-const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, close }) => {
+const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = memo(({ order, opened, close }) => {
   if (!order) {
     return <></>;
   }
@@ -65,6 +65,6 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = ({ order, opened, 
       </Flex>
     </Modal>
   );
-};
+});
 
 export default RequesterOrderDetails;
