@@ -10,10 +10,10 @@ const API = {
   updateContactInfo: (...args: any[]) => ipcRenderer.invoke("updateContactInfo", ...args),
   manager: {
     findOrders: (...args: any[]) => ipcRenderer.invoke("manager.findOrders", ...args),
-    login: (...args: any[]) => ipcRenderer.invoke("manager.assignOrder", ...args),
+    assignOrder: (...args: any[]) => ipcRenderer.invoke("manager.assignOrder", ...args),
     updatePrivateDescription: (...args: any[]) => ipcRenderer.invoke("manager.updatePrivateDescription", ...args),
     getModelers: (...args: any[]) => ipcRenderer.invoke("manager.getModelers", ...args),
-    assignOrder: (...args: any[]) => ipcRenderer.invoke("manager.assignOrder", ...args),
+    getRequesters: (...args: any[]) => ipcRenderer.invoke("manager.getRequesters", ...args),
   },
   requester: {
     submitOrder: (...args: any[]) => ipcRenderer.invoke("requester.submitOrder", ...args),
@@ -22,6 +22,7 @@ const API = {
     getOrders: (...args: any[]) => ipcRenderer.invoke("requester.getOrders", ...args),
     getSubmissions: (...args: any[]) => ipcRenderer.invoke("requester.getSubmissions", ...args),
     submitEdit: (...args: any[]) => ipcRenderer.invoke("requester.submitEdit", ...args),
+    finishOrder: (...args: any[]) => ipcRenderer.invoke("requester.finishOrder", ...args),
   },
   modeler: {
     getOrders: (...args: any[]) => ipcRenderer.invoke("modeler.getOrders", ...args),
