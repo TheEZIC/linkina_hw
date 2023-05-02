@@ -34,10 +34,8 @@ const SignInForm: FC<SignInFormProps> = ({toggle}) => {
     }
 
     const loginData = await window.API.login(login, password);
-    console.log(loginData, "login data");
 
     if (loginData) {
-      console.log("set user")
       setUser(loginData);
     }
   };
