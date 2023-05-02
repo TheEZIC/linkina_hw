@@ -20,7 +20,7 @@ type ContactInfo = {
   email?: string,
 }
 
-type OrderState = "unresponded" | "assigned" | "responded" | "finished";
+type OrderState = "unassigned" | "assigned" | "responded" | "finished";
 
 type Order = {
   id: number,

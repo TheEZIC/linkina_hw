@@ -81,8 +81,9 @@ const backend = {
         return database.prepare(`SELECT * FROM orders`).all() as any;
       }
     },
-    assignOrder(id: number, modeler_id: number, deadline: Date): Promise<void> {
-      return database.prepare(`UPDATE orders SET modeler_id = ?, deadline = ? WHERE id = ?`).run(modeler_id, deadline.valueOf(), id) as any;
+    assignOrder(id: number, modeler_id?: number, deadline?: Date): Promise<void> {
+      let state = modeler_id ? "assigned" : "unassigned";
+      return database.prepare(`UPDATE orders SET modeler_id = ?, deadline = ?, state = ? WHERE id = ?`).run(modeler_id, deadline.valueOf(), state, id) as any;
     },
     updatePrivateDescription(id: number, description: string): Promise<void> {
       return database.prepare(`UPDATE orders SET private_description = ? WHERE id = ?`).run(description, id) as any;
@@ -96,7 +97,7 @@ const backend = {
   },
   requester: {
     submitOrder(requester_id: number, order: Pick<Order, 'name' | 'specification'>) {
-      return database.prepare(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`).run("unresponded", requester_id, order.name, order.specification);
+      return database.prepare(`INSERT INTO orders (state, requester_id, name, specification) VALUES (?, ?, ?, ?)`).run("unassigned", requester_id, order.name, order.specification);
     },
     editOrder(requester_id: number, order_id: number, data: Pick<Order, 'name' | 'specification'>): Promise<void> {
       let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
@@ -129,17 +130,27 @@ const backend = {
       if(order.requester_id != requester_id)
         throw "bruh";
 
+      database.prepare(`UPDATE orders SET state = ? WHERE id = ?`).run("assigned", order_id);
+
       return database.prepare(`INSERT INTO edits (order_id, date, specification) VALUES (?, ?, ?)`).run(order_id, Date.now(), specification) as any;
+    },
+    finishOrder(requester_id: number, order_id: number): Promise<void> {
+      let order = database.prepare(`SELECT requester_id FROM orders WHERE id = ?`).get(order_id) as Pick<Order, 'requester_id'>;
+      if(order?.requester_id != requester_id)
+        throw "bruh";
+
+      return database.prepare(`UPDATE orders SET state = ? WHERE id = ?`).run("finished", order_id) as any;
     }
   },
   modeler: {
     getOrders(modeler_id: number): Promise<Order[]> {
-      return database.prepare(`SELECT * FROM orders WHERE modeler_id = ?`).all(modeler_id) as any;
+      return database.prepare(`SELECT * FROM orders WHERE modeler_id = ? AND state <> ?`).all(modeler_id, "finished") as any;
     },
     getEdits(order_id: number): Promise<Edit[]> {
       return database.prepare(`SELECT * FROM edits WHERE order_id = ?`).all(order_id) as any;
     },
     addSubmission(order_id: number, file: string): Promise<void> {
+      database.prepare(`UPDATE orders SET state = ? WHERE id = ?`).run("responded", order_id);
       return database.prepare(`INSERT INTO submissions (order_id, date, demo_file) VALUES (?, ?, ?)`).run(order_id, Date.now(), file) as any;
     }
   }
