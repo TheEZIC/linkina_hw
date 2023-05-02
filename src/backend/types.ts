@@ -6,15 +6,12 @@ type BaseUser = {
   name: string;
 }
 
-type ModelerUser = {
-  id: number;
-  name: string;
-};
-
 type User = {
   username: string,
   password: string,
-} & BaseUser
+} & BaseUser;
+
+type ModelerUser = Pick<User, "name" | "id">;
 
 type ContactInfo = {
   id: number,

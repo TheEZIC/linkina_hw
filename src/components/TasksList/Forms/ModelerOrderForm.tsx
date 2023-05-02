@@ -1,10 +1,8 @@
 import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
-import {useModelers} from "../../../hooks/useModelers";
 import {useManagerOrders} from "../../../hooks/useManagerOrders";
 import {Button, Flex, Modal, Select, Textarea} from "@mantine/core";
-import {DateTimePicker} from "@mantine/dates";
-import {FC, useEffect} from "react";
+import {FC, memo, useEffect} from "react";
 
 export type ModelerOrderFormType = {
 };
@@ -13,7 +11,7 @@ export type Modeler = {
   order?: Order;
 } & FormBaseProps;
 
-const ManagerOrderForm: FC<Modeler> = ({ opened, close, order }) => {
+const ManagerOrderForm: FC<Modeler> = memo(({ opened, close, order }) => {
   if (!order) {
     return <></>;
   }
@@ -27,7 +25,7 @@ const ManagerOrderForm: FC<Modeler> = ({ opened, close, order }) => {
       modelerId: order.modeler_id ?? 0,
       deadline: order.deadline ?? Date.now(),
     });
-  }, [order]);
+  }, [order, opened]);
 
   const onSave = async () => {
     getOrders();
@@ -60,6 +58,6 @@ const ManagerOrderForm: FC<Modeler> = ({ opened, close, order }) => {
       </form>
     </Modal>
   );
-};
+});
 
 export default ManagerOrderForm;

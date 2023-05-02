@@ -1,7 +1,8 @@
 import React, {FC} from 'react';
 import {Button, Card, Flex, Input, PasswordInput, Space, Title} from "@mantine/core";
 import {useForm} from "@mantine/form";
-import {useUserContext} from "../../contexts/user-context";
+import {useUserStore} from "../../stores/userStore";
+import {shallow} from "zustand/shallow";
 
 type SignInFormType = {
   login: string;
@@ -13,7 +14,11 @@ export type SignInFormProps = {
 };
 
 const SignInForm: FC<SignInFormProps> = ({toggle}) => {
-  const {setUser} = useUserContext();
+  const [setUser] = useUserStore(
+    (state) => [state.setUser],
+    shallow
+  );
+
   const form = useForm<SignInFormType>({
     initialValues: {
       login: "",

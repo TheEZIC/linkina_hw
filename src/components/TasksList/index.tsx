@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {shallow} from "zustand/shallow";
 import {ActionIcon, Flex, Table, Text} from "@mantine/core";
-import {useUserContext} from "../../contexts/user-context";
 import RequesterHeader from "./TableHeaders/RequesterHeader";
 import {BiLogOut} from "react-icons/bi";
 import RequesterControls from "./Controls/RequesterControls";
@@ -10,9 +10,25 @@ import ManagerBody from "./TableBodies/ManagerBody";
 import styles from "./index.module.scss";
 import ModelerBody from "./TableBodies/ModelerBody";
 import ModelerHeader from "./TableHeaders/ModelerHeader";
+import {useModelersStore} from "../../stores/modelersStore";
+import {useUserStore} from "../../stores/userStore";
 
 const TasksList = () => {
-  const { user, removeUser } = useUserContext();
+  const [getModelers] = useModelersStore(
+    (state) => [state.getModelers],
+    shallow
+  );
+
+  const [user, removeUser] = useUserStore(
+    (state) => [state.user, state.removeUser],
+    shallow
+  );
+
+  // request modelers ones when app opened
+  useEffect(() => {
+    getModelers();
+  }, [])
+
   const { role } = user;
 
   const renderHeader = () => {

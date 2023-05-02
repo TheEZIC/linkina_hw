@@ -3,16 +3,17 @@ import * as ReactDOM from "react-dom/client";
 import { APP_TITLE } from "./constants/AppTitle";
 import {MantineProvider} from '@mantine/core';
 import AuthForm from "./components/AuthForm";
-import {UserProvider, useUserContext} from "./contexts/user-context";
-import {useLocalStorage} from "@mantine/hooks";
 import TasksList from "./components/TasksList";
 import styles from "./index.module.scss";
 import "./index.scss";
-import {useState} from "react";
-import {DataProvider} from "./contexts/data-context";
+import {useUserStore} from "./stores/userStore";
+import {shallow} from "zustand/shallow";
 
 const App = () => {
-  const {user} = useUserContext();
+  const [user] = useUserStore(
+    (state) => [state.user],
+    shallow
+  );
 
   const renderContent = () => {
     return !user ? <AuthForm/> : <TasksList/>;
@@ -26,24 +27,13 @@ const App = () => {
 };
 
 const Providers = () => {
-  const [user, setUser] = useLocalStorage<BaseUser>({ key: "user" });
-  const [data, setData] = useState<unknown[]>([]);
-
   return (
     <MantineProvider
       theme={{ colorScheme: "dark" }}
       withGlobalStyles
       withNormalizeCSS
     >
-      <UserProvider value={{
-        user,
-        setUser: (user: BaseUser) => setUser(user),
-        removeUser: () => setUser(undefined),
-      }}>
-        <DataProvider value={{ data, setData }}>
-          <App/>
-        </DataProvider>
-      </UserProvider>
+      <App/>
     </MantineProvider>
   );
 };

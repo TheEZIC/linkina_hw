@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {useUserContext} from "../../../contexts/user-context";
 import {useManagerOrders} from "../../../hooks/useManagerOrders";
 import {statusMap} from "../../../utils";
 import {ActionIcon, Flex, Tooltip} from "@mantine/core";
@@ -8,9 +7,15 @@ import ManagerOrderForm from "../Forms/ManagerOrderForm";
 import {HiPencilAlt} from "react-icons/hi";
 import ManagerAndModelerOrderDetails from "../Details/ManagerAndModelerOrderDetails";
 import {FiMoreHorizontal} from "react-icons/fi";
+import {useUserStore} from "../../../stores/userStore";
+import {shallow} from "zustand/shallow";
 
 const ManagerBody = () => {
-  const {user} = useUserContext();
+  const [user] = useUserStore(
+    (state) => [state.user],
+    shallow
+  );
+
   const [orders, getOrders] = useManagerOrders();
   const [activeOrder, setActiveOrder] = useState<Order>();
   const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);

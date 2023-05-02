@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import {useUserContext} from "../../../contexts/user-context";
 import {useDisclosure} from "@mantine/hooks";
 import {useModelerOrders} from "../../../hooks/useModelerOrders";
 import {statusMap} from "../../../utils";
@@ -7,9 +6,15 @@ import {ActionIcon, Flex, Tooltip} from "@mantine/core";
 import {FiMoreHorizontal} from "react-icons/fi";
 import {HiPencilAlt} from "react-icons/hi";
 import ManagerAndModelerOrderDetails from "../Details/ManagerAndModelerOrderDetails";
+import {useUserStore} from "../../../stores/userStore";
+import {shallow} from "zustand/shallow";
 
 const ModelerBody = () => {
-  const {user} = useUserContext();
+  const [user] = useUserStore(
+    (state) => [state.user],
+    shallow
+  );
+
   const [orders, getOrders] = useModelerOrders(user.id);
   const [activeOrder, setActiveOrder] = useState<Order>();
   const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);

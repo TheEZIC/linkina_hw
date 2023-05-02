@@ -1,9 +1,10 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, memo, useEffect} from 'react';
 import {Button, Flex, Modal, Select, Textarea, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
-import {useUserContext} from "../../../contexts/user-context";
 import {useRequesterOrders} from "../../../hooks/useRequesterOrders";
 import {FormBaseProps} from "../types/FormBaseProps";
+import {useUserStore} from "../../../stores/userStore";
+import {shallow} from "zustand/shallow";
 
 export type RequesterOrderFormType = {
   name: string;
@@ -16,8 +17,12 @@ export type RequesterOrderFormProps = {
   onSave: (user: BaseUser, order: Pick<Order, "name" | "specification">) => Promise<unknown> | unknown;
 } & FormBaseProps;
 
-const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened, close, onSave, title }) => {
-  const { user } = useUserContext();
+const RequesterOrderForm: FC<RequesterOrderFormProps> = memo(({ initialValues, opened, close, onSave, title }) => {
+  const [user] = useUserStore(
+    (state) => [state.user],
+    shallow
+  );
+
   const [orders, getOrders] = useRequesterOrders();
   const form = useForm<RequesterOrderFormType>();
 
@@ -26,7 +31,7 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened
       name: initialValues?.name ?? "",
       specification: initialValues?.specification ?? "",
     });
-  }, [initialValues]);
+  }, [initialValues, opened]);
 
   const addOrder = async () => {
     const { name, specification } = form.values;
@@ -73,6 +78,6 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened
       </form>
     </Modal>
   );
-};
+});
 
 export default RequesterOrderForm;

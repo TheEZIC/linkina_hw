@@ -3,7 +3,6 @@ import {ActionIcon, Button, Flex, Tooltip} from "@mantine/core";
 import {useRequesterOrders} from "../../../hooks/useRequesterOrders";
 import {useDisclosure} from "@mantine/hooks";
 import RequesterOrderForm from "../Forms/RequesterOrderForm";
-import {useUserContext} from "../../../contexts/user-context";
 import RequesterOrderDetails from "../Details/RequesterOrderDetails";
 import {BsFillTrashFill} from "react-icons/bs";
 import {HiPencilAlt} from "react-icons/hi";
@@ -11,9 +10,15 @@ import {FiMoreHorizontal} from "react-icons/fi";
 import {statusMap} from "../../../utils";
 import {FaPlus} from "react-icons/fa";
 import AddEditForm from "../Forms/AddEditForm";
+import {useUserStore} from "../../../stores/userStore";
+import {shallow} from "zustand/shallow";
 
 const RequesterBody = () => {
-  const {user} = useUserContext();
+  const [user] = useUserStore(
+    (state) => [state.user],
+    shallow
+  );
+
   const [orders, getOrders] = useRequesterOrders();
   const [activeOrder, setActiveOrder] = useState<Order>();
   const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);

@@ -3,6 +3,8 @@ import {Modal, Title, Text, Flex} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {statusMap} from "../../../utils";
 import {useModelers} from "../../../hooks/useModelers";
+import {useModelersStore} from "../../../stores/modelersStore";
+import {shallow} from "zustand/shallow";
 
 type ManagerAndModelerOrderDetailsProps = {
   order?: Order;
@@ -16,7 +18,10 @@ const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = ({
   }
 
   const [edits, setEdits] = useState<Edit[]>();
-  const [modelers, getModelers] = useModelers();
+  const [modelers] = useModelersStore(
+    (state) => [state.modelers],
+    shallow
+  );
 
   const getEdits = async () => {
     const edits = await window.API.modeler.getEdits(order.id);
@@ -25,7 +30,6 @@ const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = ({
 
   useEffect(() => {
     getEdits();
-    getModelers();
   }, [opened]);
 
   const renderEdits = () => edits.map((e, i) => (

@@ -1,15 +1,23 @@
-import {useDataContext} from "../contexts/data-context";
-import {useUserContext} from "../contexts/user-context";
+import {useCallback} from "react";
+import {shallow} from "zustand/shallow";
+import {useUserStore} from "../stores/userStore";
+import {useDataStore} from "../stores/dataStore";
 
 export const useRequesterOrders = (): [Order[], () => Promise<void>] => {
-  const { user } = useUserContext();
-  const { data, setData } = useDataContext();
+  const [user] = useUserStore(
+    (state) => [state.user],
+    shallow
+  );
 
-  const getOrders = async () => {
+  const [data, setData] = useDataStore(
+    (state) => [state.data, state.setData],
+    shallow
+  );
+
+  const getOrders = useCallback(async () => {
     const orders = await window.API.requester.getOrders(user.id);
-    console.log(orders, "orders");
     setData(orders);
-  };
+  }, []);
 
   return [data as Order[], getOrders];
 };

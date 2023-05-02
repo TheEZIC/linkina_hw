@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, memo} from 'react';
 import {Button, Flex, Modal, Textarea, TextInput} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
@@ -12,7 +12,7 @@ type AddEditFormProps = {
   user: BaseUser;
 } & FormBaseProps;
 
-const AddEditForm: FC<AddEditFormProps> = ({ opened, close, order, user }) => {
+const AddEditForm: FC<AddEditFormProps> = memo(({ opened, close, order, user }) => {
   const form = useForm<AddEditFormType>({
     initialValues: {
       specification: "",
@@ -58,6 +58,6 @@ const AddEditForm: FC<AddEditFormProps> = ({ opened, close, order, user }) => {
       </Flex>
     </Modal>
   );
-};
+});
 
 export default AddEditForm;
