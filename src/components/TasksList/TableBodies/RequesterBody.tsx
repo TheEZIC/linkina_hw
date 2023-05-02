@@ -8,10 +8,11 @@ import {BsFillTrashFill} from "react-icons/bs";
 import {HiPencilAlt} from "react-icons/hi";
 import {FiMoreHorizontal} from "react-icons/fi";
 import {statusMap} from "../../../utils";
-import {FaPlus} from "react-icons/fa";
+import {FaCheck, FaPlus} from "react-icons/fa";
 import AddEditForm from "../Forms/AddEditForm";
 import {useUserStore} from "../../../stores/userStore";
 import {shallow} from "zustand/shallow";
+import DummyButton from "../../DummyButton";
 
 const RequesterBody = () => {
   const [user] = useUserStore(
@@ -53,6 +54,44 @@ const RequesterBody = () => {
     getOrders();
   };
 
+  const finishOrder = async (orderId: number) => {
+    await window.API.requester.finishOrder(user.id, orderId)
+    getOrders();
+  };
+
+  const renderIcon = (order: Order) => {
+    //"unassigned" | "assigned"
+    if (order.state === "unassigned" || order.state === "assigned") {
+      return (
+        <Tooltip label={"Удалить"} color={"red.8"} withArrow={true}>
+          <ActionIcon
+            color={"red.5"}
+            variant={"light"}
+            ml={"sm"}
+            onClick={() => deleteOrder(order.id)}
+          >
+            <BsFillTrashFill />
+          </ActionIcon>
+        </Tooltip>
+      );
+    } else if (order.state === "responded") {
+      return (
+        <Tooltip label={"Подтвердить"} color={"green.8"} withArrow={true}>
+          <ActionIcon
+            color={"green.5"}
+            variant={"light"}
+            ml={"sm"}
+            onClick={() => finishOrder(order.id)}
+          >
+            <FaCheck />
+          </ActionIcon>
+        </Tooltip>
+      );
+    } else {
+      return <DummyButton />;
+    }
+  };
+
   const renderItems = () => orders.map((o, i) => (
     <tr key={`order-${i}-${o.id}`}>
       <td>{o.id}</td>
@@ -61,16 +100,18 @@ const RequesterBody = () => {
       <td>{statusMap[o.state]}</td>
       <td>
         <Flex align={"center"}>
-          <Tooltip label={"Добавить правку"} color={"green.8"} withArrow={true}>
-            <ActionIcon
-              color={"green.5"}
-              variant={"light"}
-              ml={"sm"}
-              onClick={() => openSubmitEditModal(o)}
-            >
-              <FaPlus/>
-            </ActionIcon>
-          </Tooltip>
+          {o.state !== "finished" ? (
+            <Tooltip label={"Добавить правку"} color={"green.8"} withArrow={true}>
+              <ActionIcon
+                color={"green.5"}
+                variant={"light"}
+                ml={"sm"}
+                onClick={() => openSubmitEditModal(o)}
+              >
+                <FaPlus/>
+              </ActionIcon>
+            </Tooltip>
+          ) : <DummyButton />}
 
           <Tooltip label={"Подробнее"} color={"yellow.8"} withArrow={true}>
             <ActionIcon
@@ -83,27 +124,20 @@ const RequesterBody = () => {
             </ActionIcon>
           </Tooltip>
 
-          <Tooltip label={"Редактировать"} color={"violet.8"} withArrow={true}>
-            <ActionIcon
-              color={"violet.5"}
-              variant={"light"}
-              ml={"sm"}
-              onClick={() => openEditModal(o)}
-            >
-              <HiPencilAlt/>
-            </ActionIcon>
-          </Tooltip>
+          {o.state !== "finished" ? (
+            <Tooltip label={"Редактировать"} color={"violet.8"} withArrow={true}>
+              <ActionIcon
+                color={"violet.5"}
+                variant={"light"}
+                ml={"sm"}
+                onClick={() => openEditModal(o)}
+              >
+                <HiPencilAlt/>
+              </ActionIcon>
+            </Tooltip>
+          ) : <DummyButton />}
 
-          <Tooltip label={"Удалить"} color={"red.8"} withArrow={true}>
-            <ActionIcon
-              color={"red.5"}
-              variant={"light"}
-              ml={"sm"}
-              onClick={() => deleteOrder(o.id)}
-            >
-              <BsFillTrashFill/>
-            </ActionIcon>
-          </Tooltip>
+          {renderIcon(o)}
         </Flex>
       </td>
     </tr>
@@ -123,7 +157,6 @@ const RequesterBody = () => {
         opened={submitEditOpened}
         close={closeSubmitEdit}
         order={activeOrder}
-        user={user}
       />
       <RequesterOrderDetails
         opened={detailsOpened}

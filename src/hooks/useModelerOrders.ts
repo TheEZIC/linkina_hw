@@ -9,6 +9,7 @@ export const useModelerOrders = (modelId: number): [Order[], () => Promise<void>
   );
 
   const getOrders = useCallback(async () => {
+    setData([]);
     const orders = await window.API.modeler.getOrders(modelId);
     setData(orders);
   }, []);

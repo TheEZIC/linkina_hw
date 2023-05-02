@@ -9,6 +9,7 @@ export const useManagerOrders = (): [Order[], () => Promise<void>] => {
   );
 
   const getOrders = useCallback(async () => {
+    setData([]);
     const orders = await window.API.manager.findOrders();
     setData(orders);
   }, []);

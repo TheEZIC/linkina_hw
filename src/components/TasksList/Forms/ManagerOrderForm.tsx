@@ -48,7 +48,8 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = memo(({ opened, close, order
     ];
   };
 
-  const onSave = useCallback(async () => {
+  const onSave = useCallback(async (e: any) => {
+    e.preventDefault();
     const { privateDescription, deadline } = form.values;
     let { modelerId } = form.values;
 

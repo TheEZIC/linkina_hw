@@ -8,6 +8,8 @@ import {HiPencilAlt} from "react-icons/hi";
 import ManagerAndModelerOrderDetails from "../Details/ManagerAndModelerOrderDetails";
 import {useUserStore} from "../../../stores/userStore";
 import {shallow} from "zustand/shallow";
+import {FaPlus} from "react-icons/fa";
+import AddSubmitForm from "../Forms/AddSubmitForm";
 
 const ModelerBody = () => {
   const [user] = useUserStore(
@@ -17,21 +19,21 @@ const ModelerBody = () => {
 
   const [orders, getOrders] = useModelerOrders(user.id);
   const [activeOrder, setActiveOrder] = useState<Order>();
-  const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
   const [detailsOpened, { open: openDetails, close: closeDetails }] = useDisclosure(false);
+  const [submitOpened, { open: openSubmit, close: closeSubmit }] = useDisclosure(false);
 
   useEffect(() => {
     getOrders();
   }, []);
 
-  const openEditModal = (order: Order) => {
-    setActiveOrder(order);
-    openEdit();
-  };
-
   const openDetailsModal = (order: Order) => {
     setActiveOrder(order);
     openDetails();
+  };
+
+  const openSubmitModal = (order: Order) => {
+    setActiveOrder(order);
+    openSubmit();
   };
 
   const renderItems = () => orders.map((o, i) => (
@@ -42,6 +44,16 @@ const ModelerBody = () => {
       <td>{statusMap[o.state]}</td>
       <td>
         <Flex align={"center"}>
+          <Tooltip label={"Добавить результат"} color={"green.8"} withArrow={true}>
+            <ActionIcon
+              color={"green.5"}
+              variant={"light"}
+              ml={"sm"}
+              onClick={() => openSubmitModal(o)}
+            >
+              <FaPlus/>
+            </ActionIcon>
+          </Tooltip>
           <Tooltip label={"Подробнее"} color={"yellow.8"} withArrow={true}>
             <ActionIcon
               color={"yellow.5"}
@@ -50,16 +62,6 @@ const ModelerBody = () => {
               onClick={() => openDetailsModal(o)}
             >
               <FiMoreHorizontal/>
-            </ActionIcon>
-          </Tooltip>
-          <Tooltip label={"Редактировать"} color={"violet.8"} withArrow={true}>
-            <ActionIcon
-              color={"violet.5"}
-              variant={"light"}
-              ml={"sm"}
-              onClick={() => openEditModal(o)}
-            >
-              <HiPencilAlt/>
             </ActionIcon>
           </Tooltip>
         </Flex>
@@ -73,6 +75,11 @@ const ModelerBody = () => {
       <ManagerAndModelerOrderDetails
         opened={detailsOpened}
         close={closeDetails}
+        order={activeOrder}
+      />
+      <AddSubmitForm
+        opened={submitOpened}
+        close={closeSubmit}
         order={activeOrder}
       />
     </>

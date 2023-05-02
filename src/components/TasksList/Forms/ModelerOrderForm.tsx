@@ -27,7 +27,8 @@ const ManagerOrderForm: FC<Modeler> = memo(({ opened, close, order }) => {
     });
   }, [order, opened]);
 
-  const onSave = useCallback(async () => {
+  const onSave = useCallback(async (e: any) => {
+    e.preventDefault();
     getOrders();
     close();
   }, [form]);

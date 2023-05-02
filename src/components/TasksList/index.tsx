@@ -93,6 +93,7 @@ const TasksList = () => {
 
       <Flex
         className={styles.controls}
+        gap={"sm"}
         sx={(theme) => ({
           backgroundColor: theme.colors.gray[9],
           borderTopColor: theme.colors.gray[7],

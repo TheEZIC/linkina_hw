@@ -33,7 +33,8 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = memo(({ initialValues, o
     });
   }, [initialValues, opened]);
 
-  const addOrder = useCallback(async () => {
+  const addOrder = useCallback(async (e: Event) => {
+    e.preventDefault();
     const { name, specification } = form.values;
 
     if (!name || !specification) {

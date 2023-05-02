@@ -15,6 +15,7 @@ export const useRequesterOrders = (): [Order[], () => Promise<void>] => {
   );
 
   const getOrders = useCallback(async () => {
+    setData([]);
     const orders = await window.API.requester.getOrders(user.id);
     setData(orders);
   }, []);

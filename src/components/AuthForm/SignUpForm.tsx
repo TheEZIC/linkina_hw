@@ -30,7 +30,8 @@ const SignUpForm: FC<SignUpFormProps> = ({ toggle }) => {
     },
   });
 
-  const signUp = async () => {
+  const signUp = async (e: any) => {
+    e.preventDefault();
     const { login, password, firstName, lastName } = form.values;
 
     if (!login || !password || !firstName || !lastName) {

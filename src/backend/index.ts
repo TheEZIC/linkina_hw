@@ -63,9 +63,6 @@ const backend = {
   getContactInfo(id: number): Promise<ContactInfo> {
     return database.prepare(`SELECT * FROM contact_info WHERE id = ?`).get(id) as any;
   },
-  setContactInfo(id: number, info: Omit<ContactInfo, 'id'>) {
-    return database.prepare(`UPDATE contact_info SET address = ?, phone = ?, email = ? WHERE id = ?`).run(info.address, info.phone, info.email, id);
-  },
   async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>): Promise<void> {
     let keys = Object.keys(update) as ObjectKeys<Partial<Omit<ContactInfo, "id">>>;
     let info = await this.getContactInfo(id);

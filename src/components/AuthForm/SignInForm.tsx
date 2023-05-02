@@ -26,7 +26,8 @@ const SignInForm: FC<SignInFormProps> = ({toggle}) => {
     },
   });
 
-  const signIn = async () => {
+  const signIn = async (e: any) => {
+    e.preventDefault();
     const { login, password } = form.values;
 
     if (!login || !password) {

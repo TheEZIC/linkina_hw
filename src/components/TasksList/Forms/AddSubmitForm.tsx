@@ -4,17 +4,17 @@ import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
 import {useUserStore} from "../../../stores/userStore";
 import {shallow} from "zustand/shallow";
-import {useModelerOrders} from "../../../hooks/useModelerOrders";
 
 type AddEditFormType = {
-  specification: string;
+  description: string;
+  fileUrl: string;
 };
 
-type AddEditFormProps = {
+type AddSubmitForm = {
   order: Order;
 } & FormBaseProps;
 
-const AddEditForm: FC<AddEditFormProps> = memo(({ opened, close, order }) => {
+const AddEditForm: FC<AddSubmitForm> = memo(({ opened, close, order }) => {
   if (!order) {
     return <></>;
   }
@@ -23,23 +23,22 @@ const AddEditForm: FC<AddEditFormProps> = memo(({ opened, close, order }) => {
     (state) => [state.user],
     shallow
   );
-  const [orders, getOrders] = useModelerOrders(user.id);
 
   const form = useForm<AddEditFormType>({
     initialValues: {
-      specification: "",
+      description: "",
+      fileUrl: "",
     },
   });
 
   const submitEdit = useCallback(() => {
-    const { specification } = form.values;
+    const { description, fileUrl } = form.values;
 
-    if (!specification) {
+    if (!description || !fileUrl) {
       return;
     }
 
-    window.API.requester.submitEdit(user.id, order.id, specification);
-    getOrders();
+    window.API.modeler.addSubmission(order.id, fileUrl, description);
     close();
   }, [form]);
 
@@ -55,11 +54,18 @@ const AddEditForm: FC<AddEditFormProps> = memo(({ opened, close, order }) => {
     >
       <Flex direction={"column"} gap={"sm"}>
         <Textarea
-          label={"Текст правки"}
-          placeholder={"Введите текст правки"}
+          label={"Описание проделанной работы"}
+          placeholder={"Введите текст описания работы"}
           withAsterisk={true}
           required={true}
-          {...form.getInputProps("specification")}
+          {...form.getInputProps("description")}
+        />
+        <TextInput
+          label={"Ссылка на скачивание файла"}
+          placeholder={"Введите ссылку"}
+          withAsterisk={true}
+          required={true}
+          {...form.getInputProps("fileUrl")}
         />
         <Flex gap={"sm"}>
           <Button color={"green"} onClick={submitEdit}>Сохранить</Button>
