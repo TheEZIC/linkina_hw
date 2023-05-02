@@ -64,13 +64,12 @@ const backend = {
     return database.prepare(`SELECT * FROM contact_info WHERE id = ?`).get(id) as any;
   },
   async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>): Promise<void> {
-    let keys = Object.keys(update) as ObjectKeys<Partial<Omit<ContactInfo, "id">>>;
     let info = await this.getContactInfo(id);
 
     if(!info) {
-      return database.prepare(`INSERT INTO contact_info (id, ${keys.join(', ')})`).run(id, ...keys.map(v => update[v])) as any;
+      return database.prepare(`INSERT INTO contact_info (id, address, email, phone)`).run(id, update.address, update.email, update.phone) as any;
     } else {
-      return database.prepare(`UPDATE contact_info SET ${keys.map(v => `${v} = ?`).join(', ')} WHERE id = ?`).run(...keys.map((v) => update[v]), id) as any;
+      return database.prepare(`UPDATE contact_info SET address = ?, email = ?, phone = ? WHERE id = ?`).run(update.address, update.email, update.phone, id) as any;
     }
   },
   manager: {
