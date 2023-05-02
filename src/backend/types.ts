@@ -43,6 +43,7 @@ type Edit = {
 type Submission = {
   id: number,
   order_id: number,
+  description?: string,
   date: number,
-  demo_file: string,
+  link: string,
 }

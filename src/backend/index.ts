@@ -41,8 +41,9 @@ CREATE TABLE IF NOT EXISTS edits (
 CREATE TABLE IF NOT EXISTS submissions (
   id integer PRIMARY KEY AUTOINCREMENT,
   order_id integer NOT NULL,
+  description text,
   date integer NOT NULL,
-  demo_file text NOT NULL
+  link text NOT NULL
 );
 `;
 
@@ -149,9 +150,9 @@ const backend = {
     getEdits(order_id: number): Promise<Edit[]> {
       return database.prepare(`SELECT * FROM edits WHERE order_id = ?`).all(order_id) as any;
     },
-    addSubmission(order_id: number, file: string): Promise<void> {
+    addSubmission(order_id: number, link: string, description?: string): Promise<void> {
       database.prepare(`UPDATE orders SET state = ? WHERE id = ?`).run("responded", order_id);
-      return database.prepare(`INSERT INTO submissions (order_id, date, demo_file) VALUES (?, ?, ?)`).run(order_id, Date.now(), file) as any;
+      return database.prepare(`INSERT INTO submissions (order_id, date, link, description) VALUES (?, ?, ?, ?)`).run(order_id, Date.now(), link, description) as any;
     }
   }
 }
