@@ -56,12 +56,15 @@ const backend = {
     return database.prepare(`SELECT id, role, name FROM users WHERE username = ? AND password = ?`).get(username, password) as any;
   },
   register(username: string, password: string, name: string): Promise<BaseUser> {
-    database.prepare(`INSERT INTO users (role, username, password, name) VALUES ('requester', ?, ?, ?)`).run(username, password, name);
-    console.log(backend, "backend");
+    let { lastInsertRowid } = database.prepare(`INSERT INTO users (role, username, password, name) VALUES ('requester', ?, ?, ?)`).run(username, password, name);
+    database.prepare(`INSERT INTO contact_info (id) VALUES (?)`).run(lastInsertRowid);
     return backend.login(username, password);
   },
   getContactInfo(id: number): Promise<ContactInfo> {
     return database.prepare(`SELECT * FROM contact_info WHERE id = ?`).get(id) as any;
+  },
+  setContactInfo(id: number, info: Omit<ContactInfo, 'id'>) {
+    return database.prepare(`UPDATE contact_info SET address = ?, phone = ?, email = ? WHERE id = ?`).run(info.address, info.phone, info.email, id);
   },
   async updateContactInfo(id: number, update: Partial<Omit<ContactInfo, 'id'>>): Promise<void> {
     let keys = Object.keys(update) as ObjectKeys<Partial<Omit<ContactInfo, "id">>>;
