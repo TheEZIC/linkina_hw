@@ -31,10 +31,6 @@ const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = me
     getEdits();
   }, [opened]);
 
-  const renderEdits = () => edits.map((e, i) => (
-    <span key={`edit-${i}`}>{e.specification}</span>
-  ));
-
   const getModelerName = () => {
     return modelers.find(m => m.id === order.modeler_id)?.name;
   };
@@ -45,6 +41,23 @@ const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = me
         <Flex direction={"column"}>
           <Title color={"violet"} order={4}>Исполнитель</Title>
           <Text>{getModelerName()}</Text>
+        </Flex>
+      );
+    } else {
+      return <></>;
+    }
+  };
+
+  const renderEditsItems = () => edits.map((e, i) => (
+    <span key={`edit-${i}`}>{e.specification}</span>
+  ));
+
+  const renderEdits = () => {
+    if (edits && edits.length) {
+      return (
+        <Flex direction={"column"}>
+          <Title color={"violet"} order={4}>Правки</Title>
+          {renderEditsItems()}
         </Flex>
       );
     } else {
@@ -84,12 +97,7 @@ const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = me
           <Text>{statusMap[order.state]}</Text>
         </Flex>
         {renderWorker()}
-        {edits && (
-          <Flex direction={"column"}>
-            <Title color={"violet"} order={4}>Правки</Title>
-            {renderEdits()}
-          </Flex>
-        )}
+        {renderEdits()}
       </Flex>
     </Modal>
   );

@@ -25,9 +25,22 @@ const RequesterOrderDetails: FC<RequesterOrderDetailsProps> = memo(({ order, ope
     getEdits();
   }, [opened]);
 
-  const renderEdits = () => edits.map((e, i) => (
+  const renderEditsItems = () => edits.map((e, i) => (
     <span key={`edit-${i}`}>{e.specification}</span>
   ));
+
+  const renderEdits = () => {
+    if (edits && edits.length) {
+      return (
+        <Flex direction={"column"}>
+          <Title color={"violet"} order={4}>Правки</Title>
+          {renderEditsItems()}
+        </Flex>
+      );
+    } else {
+      return <></>;
+    }
+  };
 
   return (
     <Modal
