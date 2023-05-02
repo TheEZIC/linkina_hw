@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {useUserContext} from "../../../contexts/user-context";
-import {useManagerOrders} from "../../../hooks/useManagerOrders";
+import {useDisclosure} from "@mantine/hooks";
+import {useModelerOrders} from "../../../hooks/useModelerOrders";
 import {statusMap} from "../../../utils";
 import {ActionIcon, Flex, Tooltip} from "@mantine/core";
-import {useDisclosure} from "@mantine/hooks";
-import ManagerOrderForm from "../Forms/ManagerOrderForm";
+import {FiMoreHorizontal} from "react-icons/fi";
 import {HiPencilAlt} from "react-icons/hi";
 import ManagerAndModelerOrderDetails from "../Details/ManagerAndModelerOrderDetails";
-import {FiMoreHorizontal} from "react-icons/fi";
 
-const ManagerBody = () => {
+const ModelerBody = () => {
   const {user} = useUserContext();
-  const [orders, getOrders] = useManagerOrders();
+  const [orders, getOrders] = useModelerOrders(user.id);
   const [activeOrder, setActiveOrder] = useState<Order>();
   const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
   const [detailsOpened, { open: openDetails, close: closeDetails }] = useDisclosure(false);
@@ -66,11 +65,6 @@ const ManagerBody = () => {
   return (
     <>
       {renderItems()}
-      <ManagerOrderForm
-        opened={editOpened}
-        close={closeEdit}
-        order={activeOrder}
-      />
       <ManagerAndModelerOrderDetails
         opened={detailsOpened}
         close={closeDetails}
@@ -80,4 +74,4 @@ const ManagerBody = () => {
   );
 };
 
-export default ManagerBody;
+export default ModelerBody;

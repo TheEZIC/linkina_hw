@@ -4,13 +4,13 @@ import {FormBaseProps} from "../types/FormBaseProps";
 import {statusMap} from "../../../utils";
 import {useModelers} from "../../../hooks/useModelers";
 
-type ManagerOrderDetailsProps = {
+type ManagerAndModelerOrderDetailsProps = {
   order?: Order;
 } & FormBaseProps;
 
 const detailsTitle = "Подробности заказа";
 
-const ManagerOrderDetails: FC<ManagerOrderDetailsProps> = ({ order, opened, close }) => {
+const ManagerAndModelerOrderDetails: FC<ManagerAndModelerOrderDetailsProps> = ({ order, opened, close }) => {
   if (!order) {
     return <></>;
   }
@@ -34,6 +34,19 @@ const ManagerOrderDetails: FC<ManagerOrderDetailsProps> = ({ order, opened, clos
 
   const getModelerName = () => {
     return modelers.find(m => m.id === order.modeler_id)?.name;
+  };
+
+  const renderWorker = () => {
+    if (order.modeler_id && modelers.length) {
+      return (
+        <Flex direction={"column"}>
+          <Title color={"violet"} order={4}>Исполнитель</Title>
+          <Text>{getModelerName()}</Text>
+        </Flex>
+      );
+    } else {
+      return <></>;
+    }
   };
 
   return (
@@ -67,12 +80,7 @@ const ManagerOrderDetails: FC<ManagerOrderDetailsProps> = ({ order, opened, clos
           <Title color={"violet"} order={4}>Статус</Title>
           <Text>{statusMap[order.state]}</Text>
         </Flex>
-        {order.modeler_id && modelers.length && (
-          <Flex direction={"column"}>
-            <Title color={"violet"} order={4}>Исполнитель</Title>
-            <Text>{getModelerName()}</Text>
-          </Flex>
-        )}
+        {renderWorker()}
         {edits && (
           <Flex direction={"column"}>
             <Title color={"violet"} order={4}>Правки</Title>
@@ -84,4 +92,4 @@ const ManagerOrderDetails: FC<ManagerOrderDetailsProps> = ({ order, opened, clos
   );
 };
 
-export default ManagerOrderDetails;
+export default ManagerAndModelerOrderDetails;

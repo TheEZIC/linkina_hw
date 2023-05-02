@@ -1,5 +1,5 @@
 import React from 'react';
-import {ActionIcon, Button, Flex, Table, Text} from "@mantine/core";
+import {ActionIcon, Flex, Table, Text} from "@mantine/core";
 import {useUserContext} from "../../contexts/user-context";
 import RequesterHeader from "./TableHeaders/RequesterHeader";
 import {BiLogOut} from "react-icons/bi";
@@ -8,6 +8,8 @@ import RequesterBody from "./TableBodies/RequesterBody";
 import ManagerHeader from "./TableHeaders/ManagerHeader";
 import ManagerBody from "./TableBodies/ManagerBody";
 import styles from "./index.module.scss";
+import ModelerBody from "./TableBodies/ModelerBody";
+import ModelerHeader from "./TableHeaders/ModelerHeader";
 
 const TasksList = () => {
   const { user, removeUser } = useUserContext();
@@ -20,7 +22,7 @@ const TasksList = () => {
       case "manager":
         return <ManagerHeader/>;
       case "modeler":
-        return <></>;
+        return <ModelerHeader/>;
     }
   };
 
@@ -28,9 +30,7 @@ const TasksList = () => {
     switch (role) {
       case "requester":
         return <RequesterControls/>
-      case "manager":
-        return <></>;
-      case "modeler":
+      default:
         return <></>;
     }
   };
@@ -42,7 +42,7 @@ const TasksList = () => {
       case "manager":
         return <ManagerBody/>;
       case "modeler":
-        return <></>;
+        return <ModelerBody/>;
     }
   };
 

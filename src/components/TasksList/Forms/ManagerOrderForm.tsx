@@ -37,19 +37,29 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = ({ opened, close, order }) =
     getModelers();
   }, [opened]);
 
-  const getOptions = () => modelers.map((m) => ({
-    value: m.id,
-    label: m.name,
-  }))
+  const getOptions = () => {
+    return [
+      {label: "Не установлен", value: 0},
+      ...modelers.map((m) => ({
+        value: m.id,
+        label: m.name,
+      })),
+    ];
+  };
 
   const onSave = async () => {
-    const { privateDescription, modelerId, deadline } = form.values;
+    const { privateDescription, deadline } = form.values;
+    let { modelerId } = form.values;
 
     if (privateDescription) {
       await window.API.manager.updatePrivateDescription(order.id, privateDescription);
     }
 
-    if (modelerId && deadline) {
+    if (modelerId !== null && modelerId !== undefined && deadline) {
+      if (modelerId === 0) {
+        modelerId = null;
+      }
+
       await window.API.manager.assignOrder(order.id, modelerId, new Date(deadline));
     }
 
@@ -67,39 +77,41 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = ({ opened, close, order }) =
         blur: 4,
       }}
     >
-      <Flex direction={"column"} gap={"sm"}>
-        <Textarea
-          label={"Описание для исполнителя"}
-          placeholder={"Введите описание для исполнителя"}
-          required={true}
-          {...form.getInputProps("privateDescription")}
-        />
-        <Select
-          label={"Исполнитель"}
-          placeholder={"выберите исполнителя"}
-          data={getOptions()}
-          searchable={true}
-          {...form.getInputProps("modelerId")}
-        />
-        {form.values.deadline && (
-          <DateTimePicker
-            label={"Срок выполнения"}
-            placeholder={"Укажите срок выполнения"}
-            dropdownType={"modal"}
-            value={new Date(form.values.deadline)}
-            onChange={(d) => form.setFieldValue("deadline", d.valueOf())}
-            modalProps={{
-              centered: true,
-              overlayProps: {
-                blur: 4,
-              },
-            }}
+      <form>
+        <Flex direction={"column"} gap={"sm"}>
+          <Textarea
+            label={"Описание для исполнителя"}
+            placeholder={"Введите описание для исполнителя"}
+            required={true}
+            {...form.getInputProps("privateDescription")}
           />
-        )}
-        <Flex gap={"sm"}>
-          <Button color={"green"} onClick={onSave}>Сохранить</Button>
+          <Select
+            label={"Исполнитель"}
+            placeholder={"выберите исполнителя"}
+            data={getOptions()}
+            searchable={true}
+            {...form.getInputProps("modelerId")}
+          />
+          {form.values.deadline && (
+            <DateTimePicker
+              label={"Срок выполнения"}
+              placeholder={"Укажите срок выполнения"}
+              dropdownType={"modal"}
+              value={new Date(form.values.deadline)}
+              onChange={(d) => form.setFieldValue("deadline", d.valueOf())}
+              modalProps={{
+                centered: true,
+                overlayProps: {
+                  blur: 4,
+                },
+              }}
+            />
+          )}
+          <Flex gap={"sm"}>
+            <Button color={"green"} onClick={onSave} type={"submit"}>Сохранить</Button>
+          </Flex>
         </Flex>
-      </Flex>
+      </form>
     </Modal>
   );
 };

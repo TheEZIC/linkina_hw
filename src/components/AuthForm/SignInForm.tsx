@@ -29,33 +29,39 @@ const SignInForm: FC<SignInFormProps> = ({toggle}) => {
     }
 
     const loginData = await window.API.login(login, password);
-    setUser(loginData);
-    console.log(loginData);
+    console.log(loginData, "login data");
+
+    if (loginData) {
+      console.log("set user")
+      setUser(loginData);
+    }
   };
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: "400px" }}>
-      <Flex direction={"column"} gap={"sm"}>
-        <Title order={3}>Авторизация</Title>
-        <Input.Wrapper
-          label={"Логин"}
-          withAsterisk={true}
-          required={true}
-        >
-          <Input placeholder={"Введите логин"} {...form.getInputProps("login")}/>
-        </Input.Wrapper>
-        <Input.Wrapper
-          label={"Пароль"}
-          withAsterisk={true}
-          required={true}
-        >
-          <PasswordInput placeholder={"Введите пароль"} {...form.getInputProps("password")}/>
-        </Input.Wrapper>
-        <Flex justify={"space-between"}>
-          <Button color="green" onClick={signIn}>Войти</Button>
-          <Button color="yellow" onClick={toggle}>Регистрация</Button>
+      <form>
+        <Flex direction={"column"} gap={"sm"}>
+          <Title order={3}>Авторизация</Title>
+          <Input.Wrapper
+            label={"Логин"}
+            withAsterisk={true}
+            required={true}
+          >
+            <Input placeholder={"Введите логин"} {...form.getInputProps("login")}/>
+          </Input.Wrapper>
+          <Input.Wrapper
+            label={"Пароль"}
+            withAsterisk={true}
+            required={true}
+          >
+            <PasswordInput placeholder={"Введите пароль"} {...form.getInputProps("password")}/>
+          </Input.Wrapper>
+          <Flex justify={"space-between"}>
+            <Button color="green" onClick={signIn} type={"submit"}>Войти</Button>
+            <Button color="yellow" onClick={toggle}>Регистрация</Button>
+          </Flex>
         </Flex>
-      </Flex>
+      </form>
     </Card>
   );
 };

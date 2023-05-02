@@ -50,25 +50,27 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = ({ initialValues, opened
         blur: 4,
       }}
     >
-      <Flex direction={"column"} gap={"sm"}>
-        <TextInput
-          label={"Название заказа"}
-          placeholder={"Введите название заказа"}
-          withAsterisk={true}
-          required={true}
-          {...form.getInputProps("name")}
-        />
-        <Textarea
-          label={"Описание заказа"}
-          placeholder={"Введите подробное описание заказа"}
-          withAsterisk={true}
-          required={true}
-          {...form.getInputProps("specification")}
-        />
-        <Flex gap={"sm"}>
-          <Button color={"green"} onClick={addOrder}>Сохранить</Button>
+      <form>
+        <Flex direction={"column"} gap={"sm"}>
+          <TextInput
+            label={"Название заказа"}
+            placeholder={"Введите название заказа"}
+            withAsterisk={true}
+            required={true}
+            {...form.getInputProps("name")}
+          />
+          <Textarea
+            label={"Описание заказа"}
+            placeholder={"Введите подробное описание заказа"}
+            withAsterisk={true}
+            required={true}
+            {...form.getInputProps("specification")}
+          />
+          <Flex gap={"sm"}>
+            <Button color={"green"} onClick={addOrder} type={"submit"}>Сохранить</Button>
+          </Flex>
         </Flex>
-      </Flex>
+      </form>
     </Modal>
   );
 };

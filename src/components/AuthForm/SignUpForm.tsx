@@ -33,46 +33,51 @@ const SignUpForm: FC<SignUpFormProps> = ({ toggle }) => {
     }
 
     const signUpData = await window.API.register(login, password, `${firstName} ${lastName}`);
-    setUser(signUpData);
+
+    if (signUpData) {
+      setUser(signUpData);
+    }
   };
 
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder style={{ width: "400px" }}>
-      <Flex direction={"column"} gap={"sm"}>
-        <Title order={3}>Регистрация</Title>
-        <Input.Wrapper
-          label={"Логин"}
-          withAsterisk={true}
-          required={true}
-        >
-          <Input placeholder={"Введите логин"} {...form.getInputProps("login")}/>
-        </Input.Wrapper>
-        <Input.Wrapper
-          label={"Имя"}
-          withAsterisk={true}
-          required={true}
-        >
-          <Input placeholder={"Введите имя"} {...form.getInputProps("firstName")}/>
-        </Input.Wrapper>
-        <Input.Wrapper
-          label={"Фамилия"}
-          withAsterisk={true}
-          required={true}
-        >
-          <Input placeholder={"Введите фамилию"} {...form.getInputProps("lastName")}/>
-        </Input.Wrapper>
-        <Input.Wrapper
-          label={"Пароль"}
-          withAsterisk={true}
-          required={true}
-        >
-          <PasswordInput placeholder={"Введите пароль"} {...form.getInputProps("password")}/>
-        </Input.Wrapper>
-        <Flex justify={"space-between"}>
-          <Button color="green" onClick={signUp}>Зарегистрироваться</Button>
-          <Button color="yellow" onClick={toggle}>Авторизация</Button>
+      <form>
+        <Flex direction={"column"} gap={"sm"}>
+          <Title order={3}>Регистрация</Title>
+          <Input.Wrapper
+            label={"Логин"}
+            withAsterisk={true}
+            required={true}
+          >
+            <Input placeholder={"Введите логин"} {...form.getInputProps("login")}/>
+          </Input.Wrapper>
+          <Input.Wrapper
+            label={"Имя"}
+            withAsterisk={true}
+            required={true}
+          >
+            <Input placeholder={"Введите имя"} {...form.getInputProps("firstName")}/>
+          </Input.Wrapper>
+          <Input.Wrapper
+            label={"Фамилия"}
+            withAsterisk={true}
+            required={true}
+          >
+            <Input placeholder={"Введите фамилию"} {...form.getInputProps("lastName")}/>
+          </Input.Wrapper>
+          <Input.Wrapper
+            label={"Пароль"}
+            withAsterisk={true}
+            required={true}
+          >
+            <PasswordInput placeholder={"Введите пароль"} {...form.getInputProps("password")}/>
+          </Input.Wrapper>
+          <Flex justify={"space-between"}>
+            <Button color="green" onClick={signUp} type={"submit"}>Зарегистрироваться</Button>
+            <Button color="yellow" onClick={toggle}>Авторизация</Button>
+          </Flex>
         </Flex>
-      </Flex>
+      </form>
     </Card>
   );
 };
