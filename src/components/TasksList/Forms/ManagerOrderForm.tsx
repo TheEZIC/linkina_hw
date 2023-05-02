@@ -9,7 +9,7 @@ import {shallow} from "zustand/shallow";
 
 export type ManagerOrderFormType = {
   privateDescription: string;
-  modelerId: number;
+  modelerId: string;
   deadline: number;
 };
 
@@ -33,16 +33,16 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = memo(({ opened, close, order
   useEffect(() => {
     form.setValues({
       privateDescription: order.private_description ?? "",
-      modelerId: order.modeler_id ?? 0,
+      modelerId: order.modeler_id ? String(order.modeler_id) : "0",
       deadline: order.deadline ?? Date.now(),
     });
   }, [order, opened]);
 
   const getOptions = () => {
     return [
-      {label: "Не установлен", value: 0},
+      {label: "Не установлен", value: "0"},
       ...modelers.map((m) => ({
-        value: m.id,
+        value: String(m.id),
         label: m.name,
       })),
     ];
@@ -56,12 +56,12 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = memo(({ opened, close, order
       await window.API.manager.updatePrivateDescription(order.id, privateDescription);
     }
 
-    if (modelerId !== null && modelerId !== undefined && deadline) {
-      if (modelerId === 0) {
+    if (modelerId && deadline) {
+      if (modelerId === "0") {
         modelerId = null;
       }
 
-      await window.API.manager.assignOrder(order.id, modelerId, new Date(deadline));
+      await window.API.manager.assignOrder(order.id, Number(modelerId), new Date(deadline));
     }
 
     getOrders();
