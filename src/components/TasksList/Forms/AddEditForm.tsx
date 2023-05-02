@@ -1,4 +1,4 @@
-import React, {FC, memo} from 'react';
+import React, {FC, memo, useCallback} from 'react';
 import {Button, Flex, Modal, Textarea, TextInput} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
@@ -19,7 +19,7 @@ const AddEditForm: FC<AddEditFormProps> = memo(({ opened, close, order, user }) 
     },
   });
 
-  const submitEdit = () => {
+  const submitEdit = useCallback(() => {
     const { specification } = form.values;
 
     if (!specification) {
@@ -28,7 +28,7 @@ const AddEditForm: FC<AddEditFormProps> = memo(({ opened, close, order, user }) 
 
     window.API.requester.submitEdit(user.id, order.id, specification);
     close();
-  };
+  }, [form]);
 
   if (!order || !user) {
     return <></>;

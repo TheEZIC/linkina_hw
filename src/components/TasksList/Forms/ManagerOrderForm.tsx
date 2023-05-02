@@ -1,4 +1,4 @@
-import React, {FC, memo, useEffect} from 'react';
+import React, {FC, memo, useCallback, useEffect} from 'react';
 import {Button, Flex, Modal, Select, Textarea, TextInput} from "@mantine/core";
 import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
@@ -48,7 +48,7 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = memo(({ opened, close, order
     ];
   };
 
-  const onSave = async () => {
+  const onSave = useCallback(async () => {
     const { privateDescription, deadline } = form.values;
     let { modelerId } = form.values;
 
@@ -66,7 +66,7 @@ const ManagerOrderForm: FC<ManagerOrderFormProps> = memo(({ opened, close, order
 
     getOrders();
     close();
-  }
+  }, [form]);
 
   return (
     <Modal

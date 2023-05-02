@@ -2,7 +2,7 @@ import {FormBaseProps} from "../types/FormBaseProps";
 import {useForm} from "@mantine/form";
 import {useManagerOrders} from "../../../hooks/useManagerOrders";
 import {Button, Flex, Modal, Select, Textarea} from "@mantine/core";
-import {FC, memo, useEffect} from "react";
+import {FC, memo, useCallback, useEffect} from "react";
 
 export type ModelerOrderFormType = {
 };
@@ -27,10 +27,10 @@ const ManagerOrderForm: FC<Modeler> = memo(({ opened, close, order }) => {
     });
   }, [order, opened]);
 
-  const onSave = async () => {
+  const onSave = useCallback(async () => {
     getOrders();
     close();
-  }
+  }, [form]);
 
   return (
     <Modal

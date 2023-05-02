@@ -1,4 +1,4 @@
-import React, {FC, memo, useEffect} from 'react';
+import React, {FC, memo, useCallback, useEffect} from 'react';
 import {Button, Flex, Modal, Select, Textarea, TextInput} from "@mantine/core";
 import {useForm} from "@mantine/form";
 import {useRequesterOrders} from "../../../hooks/useRequesterOrders";
@@ -33,7 +33,7 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = memo(({ initialValues, o
     });
   }, [initialValues, opened]);
 
-  const addOrder = async () => {
+  const addOrder = useCallback(async () => {
     const { name, specification } = form.values;
 
     if (!name || !specification) {
@@ -43,7 +43,7 @@ const RequesterOrderForm: FC<RequesterOrderFormProps> = memo(({ initialValues, o
     onSave(user, { name, specification });
     getOrders();
     close();
-  };
+  }, [form]);
 
   return (
     <Modal
